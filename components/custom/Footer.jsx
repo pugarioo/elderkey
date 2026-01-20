@@ -20,7 +20,7 @@ const Footer = () => {
                         className="text-slate-500 text-[22px] transform -rotate-[10deg]"
                         aria-hidden="true"
                     />
-                    <span className="text-[20px] font-serif font-semibold text-slate-800 tracking-tight">
+                    <span className="text-[20px] font-serif font-semibold text-slate-500 tracking-tight">
                         ElderKey
                     </span>
                 </div>

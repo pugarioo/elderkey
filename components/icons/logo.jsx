@@ -14,8 +14,8 @@ export default function Logo() {
                     x2="100%"
                     y2="100%"
                 >
-                    <stop offset="0%" stop-color="#FFCA28" />
-                    <stop offset="100%" stop-color="#FB8C00" />
+                    <stop offset="0%" stopColor="#FFCA28" />
+                    <stop offset="100%" stopColor="#FB8C00" />
                 </linearGradient>
             </defs>
 

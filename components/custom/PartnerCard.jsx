@@ -1,13 +1,15 @@
 import React from 'react';
 import { cn } from "@/lib/utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faTag } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
+import Link from 'next/link';
 
 /**
  * PartnerCard Component
  * 
  * @param {Object} props
+ * @param {string} [props.id] - Partner ID for linking.
  * @param {'active' | 'locked'} [props.variant='active'] - The visual style of the card.
  * @param {string} props.title - The main name (e.g., "Mercury Drug").
  * @param {string} props.subtitle - The category label (e.g., "PHARMACY").
@@ -15,9 +17,11 @@ import Image from 'next/image';
  * @param {Object} props.icon - FontAwesome icon for background watermark.
  * @param {string} [props.logoImg] - URL for the logo image in the circle.
  * @param {React.ReactNode} [props.actionIcon] - Fallback icon if no logo.
+ * @param {string} [props.promoTag] - Optional promotional tag text.
  * @param {string} [props.className] - Additional classes.
  */
 const PartnerCard = ({
+    id,
     variant = 'active',
     title,
     subtitle,
@@ -25,14 +29,15 @@ const PartnerCard = ({
     icon,
     logoImg,
     actionIcon,
+    promoTag,
     className,
 }) => {
     const isLocked = variant === 'locked';
 
-    return (
+    const CardContent = (
         <div
             className={cn(
-                "relative flex flex-col w-full max-w-sm rounded-[2rem] overflow-hidden border transition-all duration-300",
+                "relative flex flex-col w-full rounded-[2rem] overflow-hidden border transition-all duration-300",
                 "border-slate-100 shadow-sm hover:shadow-md hover:scale-[1.01]",
                 isLocked && "grayscale-[0.8] opacity-90",
                 className
@@ -52,6 +57,14 @@ const PartnerCard = ({
                 )}>
                     {icon && <FontAwesomeIcon icon={icon} className="h-16 w-16" />}
                 </div>
+
+                {/* Promo Tag */}
+                {promoTag && (
+                    <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full shadow-sm flex items-center gap-1.5 z-10">
+                        <FontAwesomeIcon icon={faTag} className="w-3 h-3 text-[#FB8500]" />
+                        <span className="text-[0.65rem] font-bold tracking-wide text-[#023047]">{promoTag}</span>
+                    </div>
+                )}
             </div>
 
             {/* Overlapping Circle Icon / Logo - Moved outside to avoid clipping */}
@@ -110,6 +123,12 @@ const PartnerCard = ({
             </div>
         </div>
     );
+
+    if (id && !isLocked) {
+        return <Link href={`/partners/${id}`} className="block w-full">{CardContent}</Link>;
+    }
+
+    return CardContent;
 };
 
 export default PartnerCard;

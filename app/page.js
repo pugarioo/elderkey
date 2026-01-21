@@ -122,7 +122,7 @@ export default function Home() {
                         Why Choose ElderKey?
                     </h2>
                     <p className="text-gray-500">
-                        We've removed the complexity from accessing your benefits.
+                        We&apos;ve removed the complexity from accessing your benefits.
                     </p>
                 </div>
 

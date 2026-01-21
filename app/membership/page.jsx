@@ -1,6 +1,6 @@
 import React from "react";
-import DottedBg from "@/Components/custom/dottedBg";
-import { Button } from "@/Components/ui/button";
+import DottedBg from "@/components/custom/dottedBg";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -8,8 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
-import FontIcon from "@/Components/icons/FontIcon";
+} from "@/components/ui/table";
+import FontIcon from "@/components/icons/FontIcon";
 
 const page = () => {
   const tiers = [

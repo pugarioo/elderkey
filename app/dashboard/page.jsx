@@ -21,11 +21,12 @@ const page = () => {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#F8F9FA] font-sans text-[#023047] overflow-x-hidden">
+    /* Match the top-level padding of your Home component */
+    <main className="relative min-h-screen bg-[#F8F9FA] font-sans text-[#023047] overflow-x-hidden pl-40 pr-40 pt-16">
       <DottedBg className="fixed inset-0 z-0" />
 
-      {/* Alignment fixed to px-19 to match your preferred layout */}
-      <section className="relative z-10 max-w-7xl mx-auto px-19 py-10">
+      {/* Content Section - Using the same alignment strategy as Home */}
+      <section className="relative z-10 py-10">
         
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
           <div className="space-y-1">
@@ -37,7 +38,6 @@ const page = () => {
             </p>
           </div>
 
-          {/* DYNAMIC PLAN BADGE - Added Hover Effects for the Badge and Button */}
           <div 
             className="bg-[#001D3D] rounded-full flex items-center shadow-lg transition-all duration-500 hover:brightness-110 hover:shadow-2xl cursor-default"
             style={{ 
@@ -47,7 +47,7 @@ const page = () => {
           >
             <div className="flex items-center gap-3">
               <div className="text-[#FFB703] text-lg">
-                <FontIcon icon="fa-crown" className="" />
+                <FontIcon icon="fa-solid fa-crown" className="" />
               </div>
               <div className="flex flex-col pr-4">
                 <span className="text-[9px] text-slate-400 font-bold tracking-widest uppercase">Current Plan</span>
@@ -64,7 +64,6 @@ const page = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          {/* CARD A: DIRECTORY */}
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FB8500] rounded-xl flex items-center justify-center mb-6 shadow-md">
@@ -76,11 +75,10 @@ const page = () => {
               </p>
             </div>
             <button className="mt-6 flex items-center gap-2 text-[#FB8500] text-sm font-bold group-hover:gap-3 transition-all">
-              Explore <FontIcon icon="fa-arrow-right" className="" />
+              Explore <FontIcon icon="fa-solid fa-arrow-right" className="" />
             </button>
           </Card>
 
-          {/* CARD B: MY ID CARD */}
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FFB703] rounded-xl flex items-center justify-center mb-6 shadow-md">
@@ -92,15 +90,14 @@ const page = () => {
               </p>
             </div>
             <button className="mt-6 flex items-center gap-2 text-[#FB8500] text-sm font-bold group-hover:gap-3 transition-all">
-              View Card <FontIcon icon="fa-eye" className="" />
+              View Card <FontIcon icon="fa-solid fa-eye" className="" />
             </button>
           </Card>
 
-          {/* CARD C: SETTINGS */}
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#023047] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-sliders" className="text-red-500" />
+                <FontIcon icon="fa-solid fa-sliders" className="text-white" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">Settings</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -108,7 +105,7 @@ const page = () => {
               </p>
             </div>
             <button className="mt-6 flex items-center gap-2 text-[#023047] text-sm font-bold group-hover:gap-3 transition-all">
-              Manage <FontIcon icon="fa-chevron-right" className="" />
+              Manage <FontIcon icon="fa-solid fa-chevron-right" className="" />
             </button>
           </Card>
 

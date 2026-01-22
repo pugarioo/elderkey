@@ -84,9 +84,9 @@ const page = () => {
                     <TableCell key={i} className={`text-center p-6 border-r last:border-r-0 border-gray-100 ${i === 1 ? 'bg-[#FFB703]/5' : ''}`}>
                       {typeof cell.val === "boolean" ? (
                         cell.val ? (
-                          <FontIcon icon="fa-check" className="text-[#FB8500] text-xl" />
+                          <FontIcon icon="fa-check" style="text-[#FB8500] text-xl" />
                         ) : (
-                          <FontIcon icon="fa-xmark" className="text-[#F8F9FA] text-lg" />
+                          <FontIcon icon="fa-xmark" style="text-[#8ECAE6] text-xl" />
                         )
                       ) : (
                         <span className={`font-bold text-lg ${cell.color}`}>

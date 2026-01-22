@@ -67,7 +67,7 @@ const page = () => {
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FB8500] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-store" className="text-white" />
+                <FontIcon icon="fa-solid fa-store" style="text-gray-100" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">Directory</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -82,7 +82,7 @@ const page = () => {
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FFB703] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-id-card" className="text-white" />
+                <FontIcon icon="fa-solid fa-id-card" style="text-prussian-navy" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">My ID Card</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -97,7 +97,7 @@ const page = () => {
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#023047] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-user-gear" className="text-white" />
+                <FontIcon icon="fa-solid fa-user-gear" style="text-gray-100" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">Settings</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">

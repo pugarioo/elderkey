@@ -6,32 +6,45 @@ import NavBar from '@/components/custom/navBar';
 import { Card } from '@/components/ui/card';
 import FontIcon from '@/components/icons/FontIcon';
 
-const Page = () => {
-  // 1. Dynamic Data State
+const page = () => {
+  // 1. Dynamic Data State (Ready for SQL integration)
   const [userData] = useState({
     name: "John Smith",
-    plan: "Silver", 
+    plan: "Silver", // Logic supports 'Bronze', 'Silver', or 'Gold'
   });
 
   // 2. Dynamic UI Scaling State
   const [uiScale] = useState(1); 
 
-  // Plan styling configuration based on ElderKey Style Guide
+  /**
+   * Plan styling configuration based on ElderKey Style Guide
+   * Added 'crown' property to dynamically change icon color based on tier.
+   */
   const planStyles = {
-    Bronze: { text: "text-[#CD7F32]", label: "BRONZE MEMBER" },
-    Silver: { text: "text-[#FB8500]", label: "SILVER MEMBER" },
-    Gold: { text: "text-[#FFB703]", label: "GOLD MEMBER" },
+    Bronze: { 
+        text: "text-[#CD7F32]", 
+        label: "BRONZE MEMBER", 
+        crown: "text-[#CD7F32]" // Bronze metallic
+    },
+    Silver: { 
+        text: "text-[#FB8500]", 
+        label: "SILVER MEMBER", 
+        crown: "text-[#8ECAE6]" // Sky Blue accent
+    },
+    Gold: { 
+        text: "text-[#FFB703]", 
+        label: "GOLD MEMBER", 
+        crown: "text-[#FFB703]" // Sunlight Yellow
+    },
   };
 
   return (
     <main className="relative min-h-screen bg-[#F8F9FA] font-sans text-[#023047] overflow-x-hidden pl-40 pr-40 pt-16">
-      {/* BACKGROUND SYSTEM */}
       <DottedBg className="fixed inset-0 z-0" />
 
-      {/* MAIN CONTENT AREA aligned to pl-40 pr-40 */}
+      {/* Main content section */}
       <section className="relative z-10 py-10">
         
-        {/* HERO WELCOME & STATUS SECTION */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
           <div className="space-y-1">
             <h1 className="font-serif font-black text-4xl md:text-5xl tracking-tight text-[#023047]">
@@ -42,9 +55,7 @@ const Page = () => {
             </p>
           </div>
 
-          {/* REFINED CURRENT PLAN COMPONENT
-              Note: Changed from rounded-full to rounded-[1.25rem] to match design images.
-          */}
+          {/* DYNAMIC PLAN BADGE */}
           <div 
             className="bg-[#023047] rounded-[1.25rem] flex items-center shadow-lg transition-all duration-500 hover:brightness-110 hover:shadow-2xl cursor-default"
             style={{ 
@@ -55,7 +66,11 @@ const Page = () => {
             {/* Status Indicator (Left Zone) */}
             <div className="flex items-center gap-4">
               <div className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center shadow-inner">
-                <FontIcon icon="fa-solid fa-crown" style="text-silver text-lg" />
+                {/* DYNAMIC CROWN COLOR: Logic pulls from planStyles configuration */}
+                <FontIcon 
+                    icon="fa-solid fa-crown" 
+                    style={`${planStyles[userData.plan].crown} text-xl`} 
+                />
               </div>
               <div className="flex flex-col pr-2">
                 <span className="text-[10px] text-gray-400 font-sans font-bold tracking-widest uppercase">
@@ -100,7 +115,8 @@ const Page = () => {
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FFB703] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-id-card" style="text-blue" />
+                {/* Fixed Maastricht Blue string logic to match FontIcon needs */}
+                <FontIcon icon="fa-solid fa-id-card" style="text-[#001D3D]" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">My ID Card</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -134,4 +150,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;

@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
     return (
-        <div className=" pl-40 pr-40 pt-16 ">
-            <div className="relative">
-                <DottedBG />
+        <div className="relative min-h-screen">
+            <DottedBG />
+            <div className="pl-40 pr-40 pt-16 relative z-10">
                 <div
                     id="hero-section"
                     className="relative z-10 flex items-center justify-between h-[calc(80vh-4rem)] w-full mt-0 "
@@ -68,7 +68,7 @@ export default function Home() {
                 </div>
             </div>
             {/* Why Section */}
-            <div className="py-24">
+            <div className="py-24 bg-white relative z-10 pl-40 pr-40">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-serif font-extrabold text-deep-navy mb-4">
                         Why Choose ElderKey?

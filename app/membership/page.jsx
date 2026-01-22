@@ -2,12 +2,12 @@ import React from "react";
 import DottedBg from "@/components/custom/dottedBg";
 import { Button } from "@/components/ui/button";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import FontIcon from "@/components/icons/FontIcon";
 

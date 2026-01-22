@@ -6,14 +6,17 @@ import NavBar from '@/components/custom/navBar';
 import { Card } from '@/components/ui/card';
 import FontIcon from '@/components/icons/FontIcon';
 
-const page = () => {
+const Page = () => {
+  // 1. Dynamic Data State
   const [userData] = useState({
     name: "John Smith",
     plan: "Silver", 
   });
 
+  // 2. Dynamic UI Scaling State
   const [uiScale] = useState(1); 
 
+  // Plan styling configuration based on ElderKey Style Guide
   const planStyles = {
     Bronze: { text: "text-[#CD7F32]", label: "BRONZE MEMBER" },
     Silver: { text: "text-[#FB8500]", label: "SILVER MEMBER" },
@@ -21,16 +24,17 @@ const page = () => {
   };
 
   return (
-    /* Match the top-level padding of your Home component */
     <main className="relative min-h-screen bg-[#F8F9FA] font-sans text-[#023047] overflow-x-hidden pl-40 pr-40 pt-16">
+      {/* BACKGROUND SYSTEM */}
       <DottedBg className="fixed inset-0 z-0" />
 
-      {/* Content Section - Using the same alignment strategy as Home */}
+      {/* MAIN CONTENT AREA aligned to pl-40 pr-40 */}
       <section className="relative z-10 py-10">
         
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
+        {/* HERO WELCOME & STATUS SECTION */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
           <div className="space-y-1">
-            <h1 className="font-serif font-black text-4xl tracking-tight text-[#023047]">
+            <h1 className="font-serif font-black text-4xl md:text-5xl tracking-tight text-[#023047]">
               Good Morning, {userData.name.split(' ')[0]}
             </h1>
             <p className="font-sans text-lg text-[#52796F]">
@@ -38,36 +42,49 @@ const page = () => {
             </p>
           </div>
 
+          {/* REFINED CURRENT PLAN COMPONENT
+              Note: Changed from rounded-full to rounded-[1.25rem] to match design images.
+          */}
           <div 
-            className="bg-[#001D3D] rounded-full flex items-center shadow-lg transition-all duration-500 hover:brightness-110 hover:shadow-2xl cursor-default"
+            className="bg-[#023047] rounded-[1.25rem] flex items-center shadow-lg transition-all duration-500 hover:brightness-110 hover:shadow-2xl cursor-default"
             style={{ 
-                padding: `${0.6 * uiScale}rem ${1.2 * uiScale}rem`,
+                padding: `${0.7 * uiScale}rem ${1.5 * uiScale}rem`,
                 transform: `scale(${uiScale})` 
             }}
           >
-            <div className="flex items-center gap-3">
-              <div className="text-[#FFB703] text-lg">
-                <FontIcon icon="fa-solid fa-crown" className="" />
+            {/* Status Indicator (Left Zone) */}
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center shadow-inner">
+                <FontIcon icon="fa-solid fa-crown" style="text-silver text-lg" />
               </div>
-              <div className="flex flex-col pr-4">
-                <span className="text-[9px] text-slate-400 font-bold tracking-widest uppercase">Current Plan</span>
-                <span className="text-white font-serif text-base leading-tight">
+              <div className="flex flex-col pr-2">
+                <span className="text-[10px] text-gray-400 font-sans font-bold tracking-widest uppercase">
+                  Current Plan
+                </span>
+                <span className="text-white font-serif text-xl font-bold leading-tight">
                   {userData.plan} Member
                 </span>
               </div>
             </div>
-            <button className="bg-[#FFB703] hover:bg-[#FB8500] hover:scale-105 active:scale-95 text-[#023047] font-bold rounded-full px-5 py-1.5 text-xs cursor-pointer transition-all duration-300">
-              UPGRADE
+
+            {/* Vertical Divider */}
+            <div className="h-10 w-[1px] bg-white/20 mx-6 opacity-50"></div>
+
+            {/* Interactive Zone (Right Zone) */}
+            <button className="text-[#FFB703] hover:text-[#FB8500] font-sans font-black text-sm tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95">
+              Upgrade
             </button>
           </div>
         </header>
 
+        {/* FUNCTIONAL CARD GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
+          {/* CARD A: DIRECTORY */}
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FB8500] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-store" style="text-gray-100" />
+                <FontIcon icon="fa-solid fa-store" style="text-white text-lg" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">Directory</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -79,10 +96,11 @@ const page = () => {
             </button>
           </Card>
 
+          {/* CARD B: MY ID CARD */}
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#FFB703] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-id-card" style="text-prussian-navy" />
+                <FontIcon icon="fa-solid fa-id-card" style="text-blue" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">My ID Card</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -94,10 +112,11 @@ const page = () => {
             </button>
           </Card>
 
+          {/* CARD C: SETTINGS */}
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>
               <div className="w-12 h-12 bg-[#023047] rounded-xl flex items-center justify-center mb-6 shadow-md">
-                <FontIcon icon="fa-solid fa-user-gear" style="text-gray-100" />
+                <FontIcon icon="fa-solid fa-user-gear" style="text-white text-lg" />
               </div>
               <h3 className="font-serif text-xl font-bold mb-2">Settings</h3>
               <p className="font-sans text-sm opacity-70 leading-relaxed">
@@ -115,4 +134,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

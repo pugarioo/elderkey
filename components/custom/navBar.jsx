@@ -1,19 +1,23 @@
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/icons/logo";
+import Link from "next/link";
 
 export default function NavBar() {
     return (
         <div className="flex items-center justify-between h-16 p-4 pl-40 pr-40 shadow-lg bg-white sticky top-0 z-99 w-full">
-            <div className="flex items-center justify-center gap-2">
+            <Link
+                href="/"
+                className="flex items-center justify-center gap-2 cursor-pointer"
+            >
                 <Logo />
                 <p className="font-serif font-bold text-deep-navy">ElderKey</p>
-            </div>
+            </Link>
             <div className="flex items-center justify-center gap-2">
-                <Button variant="ghost" className={"text-black cursor-pointer"}>
-                    Login
+                <Button asChild variant="ghost" className={"text-black cursor-pointer"}>
+                    <Link href="/login">Login</Link>
                 </Button>
-                <Button className="rounded-2xl text-black cursor-pointer hover:bg-accent">
-                    Get Digital Key
+                <Button asChild className="rounded-2xl text-black cursor-pointer hover:bg-accent">
+                    <Link href="/register">Get Digital Key</Link>
                 </Button>
             </div>
         </div>

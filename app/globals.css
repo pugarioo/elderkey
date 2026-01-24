@@ -17,6 +17,10 @@
     .animate-marquee {
         animation: marquee 25s linear infinite;
     }
+
+    .yellow-glow {
+        box-shadow: 0 10px 40px -10px rgba(255, 183, 3, 0.3);
+    }
 }
 
 @theme inline {

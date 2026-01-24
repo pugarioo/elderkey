@@ -2,12 +2,12 @@ import React from "react";
 import DottedBg from "@/components/custom/dottedBg";
 import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 import FontIcon from "@/components/icons/FontIcon";
 
@@ -154,12 +154,12 @@ const page = () => {
                                                 cell.val ? (
                                                     <FontIcon
                                                         icon="fa-check"
-                                                        className="text-[#FB8500] text-xl"
+                                                        style="text-[#FB8500] text-xl"
                                                     />
                                                 ) : (
                                                     <FontIcon
                                                         icon="fa-xmark"
-                                                        className="text-[#F8F9FA] text-lg"
+                                                        style="text-[#8ECAE6] text-xl"
                                                     />
                                                 )
                                             ) : (

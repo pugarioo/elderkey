@@ -2,17 +2,20 @@ import DottedBG from "@/components/custom/dottedBg";
 import DigitalIdCard from "@/components/custom/DigitalIdCard";
 import FontIcon from "@/components/icons/FontIcon";
 import { Button } from "@/components/ui/button";
+import PartnerMarquee from "@/components/custom/PartnerMarquee";
 
 export default function Home() {
     return (
         <div className="relative min-h-screen">
             <DottedBG />
-            <div className="pl-40 pr-40 pt-16 relative z-10">
+            <div className="pl-40 pr-40 pt-6 relative z-10">
                 <div
                     id="hero-section"
-                    className="relative z-10 flex items-center justify-between h-[calc(80vh-4rem)] w-full mt-0 "
+                    className="relative z-10 flex items-center justify-between h-[calc(95vh-4rem)] w-full mt-0 "
                 >
-                    <div className="w-1/2 h-full flex flex-col justify-center items-start gap-8">
+                    {/* ... hero content ... */}
+                    <div className="w-1/2 h-full! flex flex-col justify-center items-start gap-8">
+                        {/* ... */}
                         <div className="flex items-center justify-center gap-2 text-primary border w-fit p-0.5 pr-2 pl-2 rounded-3xl border-primary">
                             <FontIcon
                                 icon="fa-solid fa-circle"
@@ -67,6 +70,9 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+
+            <PartnerMarquee />
+
             {/* Why Section */}
             <div className="py-24 bg-white relative z-10 pl-40 pr-40">
                 <div className="text-center mb-16">

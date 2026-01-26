@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import DottedBg from "@/components/custom/dottedBg";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,8 +12,59 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import FontIcon from "@/components/icons/FontIcon";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+    const router = useRouter();
+    const [currentPlan, setCurrentPlan] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await fetch("/api/auth/me");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.user) {
+                        setCurrentPlan(data.user.plan || "Bronze");
+                        console.log("Current user:", data.user);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch user plan", error);
+            } finally {
+                setInitialLoading(false);
+            }
+        };
+        fetchUser();
+    }, []);
+
+    const handleSelectPlan = async (planName) => {
+        if (planName === currentPlan) return;
+        setLoading(true);
+        try {
+            const res = await fetch("/api/auth/update-plan", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ plan: planName }),
+            });
+
+            if (res.ok) {
+                setCurrentPlan(planName);
+                router.refresh();
+                // Optional: Show success toast
+            } else {
+                const errData = await res.json();
+                console.error("Failed to update plan. Server response:", errData);
+            }
+        } catch (error) {
+            console.error("Update error", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const tiers = [
         {
             name: "Bronze",
@@ -74,7 +127,7 @@ const page = () => {
                 {/* Header */}
                 <div className="text-center mb-16">
                     <h1 className="font-serif text-[#023047] text-5xl font-black mb-4 tracking-tight">
-                        Select Membership Tier
+                        Select Subscription Tier
                     </h1>
                     <p className="text-[#52796F] text-lg font-medium">
                         Compare features and benefits across our concierge
@@ -95,7 +148,7 @@ const page = () => {
                                 {tiers.map((tier) => (
                                     <TableHead
                                         key={tier.name}
-                                        className={`w-1/4 p-10 pt-16 text-center relative border-r last:border-r-0 border-gray-100 ${tier.isRecommended ? "bg-[#FFB703]/5 border-t-[5px] border-t-[#FFB703]" : ""}`}
+                                        className={`w-1/4 p-10 pt-16 text-center relative border-r last:border-r-0 border-gray-100 ${tier.name === currentPlan ? "bg-[#FFB703]/5 border-t-[5px] border-t-[#FFB703]" : ""}`}
                                     >
                                         <div className="flex flex-col items-center justify-center">
                                             <h3
@@ -145,32 +198,35 @@ const page = () => {
                                             val: feature.gold,
                                             color: tiers[2].discountColor,
                                         },
-                                    ].map((cell, i) => (
-                                        <TableCell
-                                            key={i}
-                                            className={`text-center p-6 border-r last:border-r-0 border-gray-100 ${i === 1 ? "bg-[#FFB703]/5" : ""}`}
-                                        >
-                                            {typeof cell.val === "boolean" ? (
-                                                cell.val ? (
-                                                    <FontIcon
-                                                        icon="fa-check"
-                                                        style="text-[#FB8500] text-xl"
-                                                    />
+                                    ].map((cell, i) => {
+                                        const isCurrentColumn = tiers[i].name === currentPlan;
+                                        return (
+                                            <TableCell
+                                                key={i}
+                                                className={`text-center p-6 border-r last:border-r-0 border-gray-100 ${isCurrentColumn ? "bg-[#FFB703]/5" : ""}`}
+                                            >
+                                                {typeof cell.val === "boolean" ? (
+                                                    cell.val ? (
+                                                        <FontIcon
+                                                            icon="fa-check"
+                                                            style="text-[#FB8500] text-xl"
+                                                        />
+                                                    ) : (
+                                                        <FontIcon
+                                                            icon="fa-xmark"
+                                                            style="text-[#8ECAE6] text-xl"
+                                                        />
+                                                    )
                                                 ) : (
-                                                    <FontIcon
-                                                        icon="fa-xmark"
-                                                        style="text-[#8ECAE6] text-xl"
-                                                    />
-                                                )
-                                            ) : (
-                                                <span
-                                                    className={`font-bold text-lg ${cell.color}`}
-                                                >
-                                                    {cell.val}
-                                                </span>
-                                            )}
-                                        </TableCell>
-                                    ))}
+                                                    <span
+                                                        className={`font-bold text-lg ${cell.color}`}
+                                                    >
+                                                        {cell.val}
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                        )
+                                    })}
                                 </TableRow>
                             ))}
 
@@ -178,32 +234,35 @@ const page = () => {
                             <TableRow className="border-t border-gray-100 hover:bg-transparent">
                                 <TableCell className="border-r border-gray-100" />
 
-                                {/* Bronze Select */}
-                                <TableCell className="p-10 text-center border-r border-gray-100">
-                                    <Button
-                                        variant="outline"
-                                        className="w-full rounded-xl py-6 border-gray-100 text-gray-400 font-bold hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer uppercase text-xs tracking-widest"
-                                    >
-                                        Select
-                                    </Button>
-                                </TableCell>
-
-                                {/* Current Plan (Disabled - No Hover Effect) */}
-                                <TableCell className="p-10 text-center border-r border-gray-100 bg-[#FFB703]/5">
-                                    <Button
-                                        disabled
-                                        className="w-full rounded-xl py-6 bg-[#FFB703]/20 text-[#FB8500] border-none font-black uppercase text-xs tracking-widest cursor-default"
-                                    >
-                                        Current Plan
-                                    </Button>
-                                </TableCell>
-
-                                {/* Gold Select - Glow Hover Effect */}
-                                <TableCell className="p-10 text-center">
-                                    <Button className="w-full rounded-xl py-6 bg-[#8ECAE6] hover:bg-[#8ECAE6]/90 hover:shadow-[0_10px_30px_-5px_rgba(142,202,230,0.4)] transition-all duration-300 text-white font-black border-none cursor-pointer uppercase text-xs tracking-widest">
-                                        Select Gold
-                                    </Button>
-                                </TableCell>
+                                {tiers.map((tier) => {
+                                    const isCurrent = currentPlan === tier.name;
+                                    return (
+                                        <TableCell key={tier.name} className={`p-10 text-center border-r last:border-r-0 border-gray-100 ${isCurrent ? "bg-[#FFB703]/5" : ""}`}>
+                                            {initialLoading ? (
+                                                <div className="animate-pulse bg-gray-200 h-10 w-full rounded-xl"></div>
+                                            ) : isCurrent ? (
+                                                <Button
+                                                    disabled
+                                                    className="w-full rounded-xl py-6 bg-[#FFB703]/20 text-[#FB8500] border-none font-black uppercase text-xs tracking-widest cursor-default"
+                                                >
+                                                    Current Plan
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    onClick={() => handleSelectPlan(tier.name)}
+                                                    disabled={loading}
+                                                    variant={tier.name === "Gold" ? "default" : "outline"}
+                                                    className={`w-full rounded-xl py-6 ${tier.name === "Gold"
+                                                        ? "bg-[#8ECAE6] hover:bg-[#8ECAE6]/90 hover:shadow-lg text-white"
+                                                        : "border-gray-100 text-gray-400 hover:bg-gray-50"
+                                                        } font-bold transition-all duration-300 cursor-pointer uppercase text-xs tracking-widest`}
+                                                >
+                                                    {loading ? "..." : `Select ${tier.name}`}
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         </TableBody>
                     </Table>

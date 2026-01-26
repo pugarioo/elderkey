@@ -941,7 +941,7 @@ export default function RegisterPage() {
             {showModal && (
                 <ConfirmationModal
                     onClose={() => setShowModal(false)}
-                    formData={formData}
+                    formData={{ ...formData, seniorId: idPreview, termsAccepted: agreed }}
                     selectedPlan={selectedPlan}
                     plans={plans}
                 />

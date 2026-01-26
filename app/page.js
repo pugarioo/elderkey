@@ -3,6 +3,7 @@ import DigitalIdCard from "@/components/custom/DigitalIdCard";
 import FontIcon from "@/components/icons/FontIcon";
 import { Button } from "@/components/ui/button";
 import PartnerMarquee from "@/components/custom/PartnerMarquee";
+import Link from "next/link";
 
 export default function Home() {
     return (
@@ -37,7 +38,7 @@ export default function Home() {
                         </p>
                         <div className="flex items-center justify-center gap-2">
                             <Button className="h-auto w-auto rounded-4xl py-4 px-7! text-deep-navy font-bold cursor-pointer hover:bg-accent hover:text-white">
-                                Create Free Account
+                                <Link href="/register">Create Free Account</Link>
                                 <FontIcon icon="fa-solid fa-arrow-right" />
                             </Button>
                             <Button className="h-auto w-auto rounded-4xl py-4 px-7! cursor-pointer border-2 border-white text-deep-navy font-bold bg-whites hover:bg-white hover:border-primary">

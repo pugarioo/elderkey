@@ -30,7 +30,9 @@ export async function POST(req) {
             birthDate,
             username,
             password: hashedPassword,
-            plan: plan || 'Silver'
+            plan: plan || 'Silver',
+            seniorId: body.seniorId || null,
+            termsAccepted: body.termsAccepted ? 1 : 0
         });
 
         // Remove password from response

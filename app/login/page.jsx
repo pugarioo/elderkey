@@ -36,7 +36,7 @@ export default function LoginPage() {
 
             if (res.ok) {
                 router.refresh(); // Refresh to update server components/cookies
-                router.push('/'); // Redirect to home or dashboard
+                router.push('/dashboard'); // Redirect to dashboard
             } else {
                 const data = await res.json();
                 setError(data.error || 'Login failed');

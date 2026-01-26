@@ -15,7 +15,19 @@ export async function GET() {
 
     try {
         const { payload } = await jwtVerify(token.value, key);
-        return NextResponse.json({ user: payload }, { status: 200 });
+
+        // Fetch fresh user data from DB
+        const { getUserByEmail } = await import('@/lib/db');
+        const user = getUserByEmail(payload.email);
+
+        if (!user) {
+            return NextResponse.json({ user: null }, { status: 404 });
+        }
+
+        // Remove sensitive data
+        const { password, ...safeUser } = user;
+
+        return NextResponse.json({ user: safeUser }, { status: 200 });
     } catch (error) {
         console.error('Token verification failed:', error);
         return NextResponse.json({ user: null }, { status: 200 });

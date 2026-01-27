@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import DottedBg from '@/components/custom/dottedBg';
-import NavBar from '@/components/custom/navBar';
 import { Card } from '@/components/ui/card';
 import FontIcon from '@/components/icons/FontIcon';
 import { useRouter } from 'next/navigation';

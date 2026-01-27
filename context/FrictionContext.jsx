@@ -174,7 +174,7 @@ export const FrictionProvider = ({ children }) => {
             <div style={{
                 position: 'fixed',
                 bottom: '10px',
-                right: '10px',
+                left: '10px',
                 backgroundColor: 'rgba(0,0,0,0.8)',
                 color: 'white',
                 padding: '10px',

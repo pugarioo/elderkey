@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PartnerCard from '@/components/custom/PartnerCard';
 import DottedBG from '@/components/custom/dottedBg';
 import {
@@ -29,6 +29,35 @@ const iconMap = {
 export default function PartnersView({ partners }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Partners');
+
+    // User Plan State
+    const [userPlan, setUserPlan] = useState('Bronze');
+    const [loadingPlan, setLoadingPlan] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.user) {
+                        setUserPlan(data.user.plan || 'Bronze');
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch user plan", error);
+            } finally {
+                setLoadingPlan(false);
+            }
+        };
+        fetchUser();
+    }, []);
+
+    const tierLevels = {
+        'Bronze': 1,
+        'Silver': 2,
+        'Gold': 3
+    };
 
     // Filter Logic
     const filteredPartners = useMemo(() => {
@@ -115,7 +144,9 @@ export default function PartnersView({ partners }) {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {filteredPartners.map((partner) => {
-                                    const isActive = true; // defaulting to active
+                                    const partnerLevel = tierLevels[partner.tier] || 1;
+                                    const userLevel = tierLevels[userPlan] || 1;
+                                    const isLocked = partnerLevel > userLevel;
 
                                     // Mock Promo Tags
                                     let promoTag = null;
@@ -127,7 +158,7 @@ export default function PartnersView({ partners }) {
                                         <PartnerCard
                                             key={partner.id}
                                             id={partner.id}
-                                            variant={isActive ? 'active' : 'locked'}
+                                            variant={isLocked ? 'locked' : 'active'}
                                             title={partner.name}
                                             subtitle={partner.field}
                                             description={partner.description}

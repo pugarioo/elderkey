@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/table";
 import FontIcon from "@/components/icons/FontIcon";
 import { useRouter } from "next/navigation";
+import { useFriction } from "@/context/FrictionContext";
+import RescueBubble from "@/components/custom/RescueBubble";
 
 const page = () => {
     const router = useRouter();
@@ -20,6 +22,7 @@ const page = () => {
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
     const [rescueMode, setRescueMode] = useState(false); // Toggle State
+    const { stressScore } = useFriction();
 
     // Modal States
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -109,16 +112,24 @@ const page = () => {
 
             {/* Rescue Mode Toggle Button */}
             {/* Rescue Mode Toggle Button */}
-            <button
-                onClick={() => setRescueMode(!rescueMode)}
-                className="fixed bottom-8 right-8 w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-50 group cursor-pointer"
-                title={rescueMode ? "Back to Table" : "Rescue Mode"}
-            >
-                <FontIcon
-                    icon={rescueMode ? "fa-table-list" : "fa-life-ring"}
-                    className="group-hover:rotate-12 transition-transform"
-                />
-            </button>
+            <div className="fixed bottom-8 right-8 z-[99999] group">
+                {(!rescueMode && stressScore > 80) && (
+                    <div className="absolute bottom-20 right-0 w-max pointer-events-none">
+                        <RescueBubble />
+                    </div>
+                )}
+                <button
+                    onClick={() => setRescueMode(!rescueMode)}
+                    className="fixed bottom-8 right-8 w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-50 group cursor-pointer"
+                    title={rescueMode ? "Back to Table" : "Rescue Mode"}
+                >
+                    <FontIcon
+                        icon={rescueMode ? "fa-table-list" : "fa-life-ring"}
+                        className="group-hover:rotate-12 transition-transform"
+                    />
+                </button>
+
+            </div>
 
             <main className="relative z-10 max-w-6xl mx-auto px-6 pt-20 flex flex-col items-center">
                 <div className="text-center mb-12">

@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import PartnerCard from '@/components/custom/PartnerCard';
 import DottedBG from '@/components/custom/dottedBg';
+import RescueBubble from '@/components/custom/RescueBubble';
 import {
     faPrescriptionBottleMedical,
     faHospital,
@@ -18,6 +19,7 @@ import {
     faList
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useFriction } from '@/context/FrictionContext';
 
 // Icon Map
 const iconMap = {
@@ -32,6 +34,7 @@ export default function PartnersView({ partners }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Partners');
     const [rescueMode, setRescueMode] = useState(false);
+    const { stressScore } = useFriction();
 
     // User Plan State
     const [userPlan, setUserPlan] = useState('Bronze');
@@ -231,16 +234,25 @@ export default function PartnersView({ partners }) {
                     </main>
 
                     {/* Rescue Mode Toggle */}
-                    <button
-                        onClick={() => setRescueMode(!rescueMode)}
-                        className="fixed bottom-8 right-8 w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-50 group cursor-pointer"
-                        title={rescueMode ? "Back to Grid" : "Rescue Mode"}
-                    >
-                        <FontAwesomeIcon
-                            icon={rescueMode ? faList : faLifeRing}
-                            className="group-hover:rotate-12 transition-transform"
-                        />
-                    </button>
+                    <div className="fixed bottom-8 right-8 z-[99999] group">
+                        {/* Suggestion Bubble - Anchored */}
+                        {(!rescueMode && stressScore > 80) && (
+                            <div className="absolute bottom-20 right-0 w-max pointer-events-none">
+                                <RescueBubble />
+                            </div>
+                        )}
+
+                        <button
+                            onClick={() => setRescueMode(!rescueMode)}
+                            className="w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 group cursor-pointer"
+                            title={rescueMode ? "Back to Grid" : "Rescue Mode"}
+                        >
+                            <FontAwesomeIcon
+                                icon={rescueMode ? faList : faLifeRing}
+                                className="group-hover:rotate-12 transition-transform"
+                            />
+                        </button>
+                    </div>
 
                 </div>
             </div>

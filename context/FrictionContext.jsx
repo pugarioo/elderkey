@@ -116,6 +116,45 @@ export const FrictionProvider = ({ children }) => {
         };
     }, []);
 
+    // Helper: Trigger Visual Assist
+    const triggerAssistiveHint = () => {
+        // 1. Inject Style if missing
+        if (!document.getElementById('friction-hint-style')) {
+            const style = document.createElement('style');
+            style.id = 'friction-hint-style';
+            style.innerHTML = `
+                @keyframes frictionPulse {
+                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.7); }
+                    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 183, 3, 0); }
+                    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0); }
+                }
+                .friction-hint-pulse {
+                    animation: frictionPulse 1.5s ease-in-out;
+                    z-index: 10000; /* Try to sit on top */
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // 2. Select Elements
+        const selector = 'button, a, input, textarea, select, [role="button"], [role="link"]';
+        const elements = document.querySelectorAll(selector);
+
+        // 3. Apply Class
+        elements.forEach(el => {
+            el.classList.add('friction-hint-pulse');
+            // Remove after animation
+            setTimeout(() => {
+                el.classList.remove('friction-hint-pulse');
+            }, 2000);
+        });
+
+        console.log(`[Friction] Hint Triggered on ${elements.length} elements`);
+    };
+
+    // Engine State for Cooldown
+    const lastHintTimeRef = useRef(0);
+
     // Module B: The Interpreter
     useEffect(() => {
         const interval = setInterval(() => {
@@ -150,6 +189,15 @@ export const FrictionProvider = ({ children }) => {
                 // Calculate new score
                 let newScore = (prevScore + increase) - DECAY_FACTOR;
                 newScore = Math.max(0, Math.min(100, newScore));
+
+                // Trigger Hints if Stress is High
+                if (newScore > 80) {
+                    const timeSinceLastHint = now - lastHintTimeRef.current;
+                    if (timeSinceLastHint > 3000) { // 3s Cooldown
+                        triggerAssistiveHint();
+                        lastHintTimeRef.current = now;
+                    }
+                }
 
                 // Reset accumulator
                 recentStressRef.current = 0;

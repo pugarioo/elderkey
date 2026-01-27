@@ -1,12 +1,86 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import FontIcon from "@/components/icons/FontIcon";
 import Link from "next/link";
 import DottedBG from "@/components/custom/dottedBg";
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
+    const router = useRouter();
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.user) {
+                        setUserData({
+                            ...data.user,
+                            plan: data.user.plan || 'Bronze',
+                            fullName: `${data.user.firstName} ${data.user.lastName}`
+                        });
+                    } else {
+                        router.push('/login');
+                    }
+                } else {
+                    router.push('/login');
+                }
+            } catch (error) {
+                console.error('Failed to fetch user:', error);
+                router.push('/login');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUser();
+    }, [router]);
+
+    const planStyles = {
+        Bronze: {
+            text: "text-[#CD7F32]",
+            bg: "bg-[#CD7F32]/10",
+            iconColor: "text-[#CD7F32]",
+            label: "BRONZE MEMBER"
+        },
+        Silver: {
+            text: "text-[#FB8500]",
+            bg: "bg-[#FB8500]/10",
+            iconColor: "text-[#FB8500]", // Or use the sky blue if preferred, but orange fits "Silver" in this theme often
+            label: "SILVER MEMBER"
+        },
+        Gold: {
+            text: "text-[#FFB703]",
+            bg: "bg-[#FFB703]/10",
+            iconColor: "text-[#FFB703]",
+            label: "GOLD MEMBER"
+        },
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center">
+                <DottedBG className="fixed inset-0 z-0" />
+                <div className="z-10 text-[#023047] font-bold text-xl animate-pulse">Loading Settings...</div>
+            </div>
+        );
+    }
+
+    if (!userData) return null;
+
+    const currentPlanStyle = planStyles[userData.plan] || planStyles.Bronze;
+
     return (
         <div className="relative min-h-screen flex flex-col">
             <DottedBG />
             <div className="container mx-auto px-6 py-12 max-w-4xl relative z-10">
+                <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#52796F] font-bold mb-6 hover:text-[#023047] transition-colors">
+                    <FontIcon icon="fa-arrow-left" /> Back to Dashboard
+                </Link>
                 <h1 className="text-3xl md:text-4xl font-serif font-black mb-8 text-dark">
                     Account Settings
                 </h1>
@@ -27,30 +101,23 @@ export default function SettingsPage() {
                     </div>
                     <div className="text-center md:text-left flex-grow space-y-2 pt-2 relative z-10">
                         <h2 className="text-3xl font-serif font-bold text-dark">
-                            John Smith
+                            {userData.fullName}
                         </h2>
-                        <div className="inline-flex items-center gap-2 bg-secondary/10 px-3 py-1 rounded-full">
-                            <FontIcon icon="fa-solid fa-crown" style="text-secondary text-sm" />
-                            <span className="text-secondary text-sm font-bold uppercase tracking-widest">
-                                Silver Member
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${currentPlanStyle.bg}`}>
+                            <FontIcon icon="fa-solid fa-crown" style={`${currentPlanStyle.iconColor} text-sm`} />
+                            <span className={`${currentPlanStyle.text} text-sm font-bold uppercase tracking-widest`}>
+                                {userData.plan} Member
                             </span>
                         </div>
-                        <p className="text-gray-500 text-lg mt-1">Member since 2024</p>
-                        <div className="flex flex-col md:flex-row gap-3 mt-6">
-                            <button className="bg-white border border-gray-200 text-dark font-bold px-6 py-3 rounded-full hover:border-primary hover:text-primary transition-all shadow-sm">
-                                Edit Profile
-                            </button>
-                            <button className="bg-white border border-gray-200 text-dark font-bold px-6 py-3 rounded-full hover:border-primary hover:text-primary transition-all shadow-sm">
-                                Change Password
-                            </button>
-                        </div>
+                        <p className="text-gray-500 text-lg mt-1">Member since {new Date(userData.createdAt).getFullYear() || '2024'}</p>
+
                     </div>
                 </div>
                 {/* Settings List (Cards instead of lines) */}
                 <div className="space-y-4">
-                    {/* Membership Item */}
+                    {/* Subscription Item */}
                     <Link
-                        href="/settings/membership"
+                        href="/dashboard/settings/subscription"
                         className="bg-white rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-card hover:shadow-glow hover:-translate-y-1 transition-all group border border-orange-900/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-6">
@@ -59,7 +126,7 @@ export default function SettingsPage() {
                             </div>
                             <div>
                                 <h3 className="text-xl font-serif font-bold text-dark group-hover:text-primary transition-colors">
-                                    Membership Plan
+                                    Subscription Plan
                                 </h3>
                                 <p className="text-gray-500 text-lg">
                                     Manage your subscription tier
@@ -67,15 +134,15 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className="px-3 py-1 bg-secondary/10 rounded-lg text-sm font-bold uppercase tracking-wider text-secondary">
-                                <FontIcon icon="fa-solid fa-crown" style="text-secondary" />Silver Member
+                            <span className={`px-3 py-1 rounded-lg text-sm font-bold uppercase tracking-wider ${currentPlanStyle.bg} ${currentPlanStyle.text}`}>
+                                <FontIcon icon="fa-solid fa-crown" style={currentPlanStyle.iconColor} /> {userData.plan} Member
                             </span>
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Payment Methods */}
                     <Link
-                        href="/settings/payments"
+                        href="/dashboard/settings/payments"
                         className="bg-white rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-card hover:shadow-glow hover:-translate-y-1 transition-all group border border-orange-900/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-6">
@@ -92,12 +159,12 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Privacy */}
                     <Link
-                        href="/settings/privacy"
+                        href="/dashboard/settings/privacy"
                         className="bg-white rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-card hover:shadow-glow hover:-translate-y-1 transition-all group border border-orange-900/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-6">
@@ -114,12 +181,12 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Notifications */}
                     <Link
-                        href="/settings/notifications"
+                        href="/dashboard/settings/notifications"
                         className="bg-white rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-card hover:shadow-glow hover:-translate-y-1 transition-all group border border-orange-900/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-6">
@@ -136,12 +203,12 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Help */}
                     <Link
-                        href="/settings/help"
+                        href="/dashboard/settings/help"
                         className="bg-white rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-card hover:shadow-glow hover:-translate-y-1 transition-all group border border-orange-900/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-6">

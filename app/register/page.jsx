@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,14 +30,14 @@ const StepNode = ({ step, targetStep, label }) => {
     let bgClass = isFuture
         ? "bg-[#BCC1C8]"
         : isCurrent
-          ? "bg-[#FFB703]"
-          : "bg-green-500";
+            ? "bg-[#FFB703]"
+            : "bg-green-500";
     let textClass = isFuture ? "text-white" : "text-white";
     let shadowClass = isCurrent
         ? "shadow-lg shadow-[#FFB703]/30"
         : isCompleted
-          ? "shadow-lg"
-          : "";
+            ? "shadow-lg"
+            : "";
 
     return (
         <div className="flex flex-col items-center gap-2">
@@ -511,76 +512,110 @@ const PlanSelectionStep = ({
     </div>
 );
 
-const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
-        <Card className="w-full max-w-lg bg-[#FAF9F6] border-none rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-300 relative">
-            <div className="flex flex-col items-center text-center mb-8">
-                <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center text-white text-4xl shadow-lg mb-4">
-                    <FontIcon icon="fa-check" />
+const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
+    const router = useRouter(); // Import useRouter at the top of the file
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleConfirm = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...formData, plan: selectedPlan }),
+            });
+
+            if (res.ok) {
+                // If registration successful, redirect to login
+                router.push('/login');
+            } else {
+                const errorData = await res.json();
+                alert(errorData.error || 'Registration failed');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+            <Card className="w-full max-w-lg bg-[#FAF9F6] border-none rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-300 relative">
+                <div className="flex flex-col items-center text-center mb-8">
+                    <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center text-white text-4xl shadow-lg mb-4">
+                        <FontIcon icon="fa-check" />
+                    </div>
+                    <h2 className="font-['Merriweather'] text-2xl font-bold text-[#023047]">
+                        Confirm Registration
+                    </h2>
                 </div>
-                <h2 className="font-['Merriweather'] text-2xl font-bold text-[#023047]">
-                    Confirm Registration
-                </h2>
-            </div>
-            <div className="space-y-6">
-                <div className="bg-[#EEF6FC] border border-[#8ECAE6]/30 rounded-2xl p-6">
-                    <h3 className="text-sm font-bold text-[#023047] uppercase tracking-wider mb-4">
-                        Profile Details
-                    </h3>
-                    <div className="grid grid-cols-2 gap-y-3 text-sm">
-                        <span className="text-gray-500 font-medium">Name:</span>
-                        <span className="text-[#023047] font-bold text-right">
-                            {formData.firstName}{" "}
-                            {formData.lastName || "Stewart"}
-                        </span>
-                        <span className="text-gray-500 font-medium">
-                            Email:
-                        </span>
-                        <span className="text-[#023047] font-bold text-right truncate pl-4">
-                            {formData.email || "martha.stewart@test.com"}
-                        </span>
-                        <span className="text-gray-500 font-medium">
-                            Mobile:
-                        </span>
-                        <span className="text-[#023047] font-bold text-right">
-                            {formData.mobileNo || "097599984111"}
-                        </span>
+                <div className="space-y-6">
+                    <div className="bg-[#EEF6FC] border border-[#8ECAE6]/30 rounded-2xl p-6">
+                        <h3 className="text-sm font-bold text-[#023047] uppercase tracking-wider mb-4">
+                            Profile Details
+                        </h3>
+                        <div className="grid grid-cols-2 gap-y-3 text-sm">
+                            <span className="text-gray-500 font-medium">Name:</span>
+                            <span className="text-[#023047] font-bold text-right">
+                                {formData.firstName}{" "}
+                                {formData.lastName || "Stewart"}
+                            </span>
+                            <span className="text-gray-500 font-medium">
+                                Email:
+                            </span>
+                            <span className="text-[#023047] font-bold text-right truncate pl-4">
+                                {formData.email || "martha.stewart@test.com"}
+                            </span>
+                            <span className="text-gray-500 font-medium">
+                                Mobile:
+                            </span>
+                            <span className="text-[#023047] font-bold text-right">
+                                {formData.mobileNo || "097599984111"}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="bg-[#FFFBEB] border border-[#FFB703]/20 rounded-2xl p-6 flex justify-between items-center">
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                Plan Name
+                            </span>
+                            <span className="text-xl font-bold text-[#023047]">
+                                {selectedPlan}
+                            </span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                Pricing
+                            </span>
+                            <span className="text-xl font-bold text-[#FB8500]">
+                                ${plans.find((p) => p.name === selectedPlan)?.price}
+                                /mo
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <div className="bg-[#FFFBEB] border border-[#FFB703]/20 rounded-2xl p-6 flex justify-between items-center">
-                    <div className="flex flex-col">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                            Plan Name
-                        </span>
-                        <span className="text-xl font-bold text-[#023047]">
-                            {selectedPlan}
-                        </span>
-                    </div>
-                    <div className="flex flex-col items-end">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                            Pricing
-                        </span>
-                        <span className="text-xl font-bold text-[#FB8500]">
-                            ${plans.find((p) => p.name === selectedPlan)?.price}
-                            /mo
-                        </span>
-                    </div>
+                <div className="flex gap-4 mt-10">
+                    <Button
+                        onClick={onClose}
+                        className="flex-1 h-14 bg-white border border-gray-200 text-gray-500 rounded-2xl font-bold transition-all cursor-pointer"
+                        disabled={isLoading}
+                    >
+                        Back
+                    </Button>
+                    <Button
+                        onClick={handleConfirm}
+                        disabled={isLoading}
+                        className="flex-[2] h-14 bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] rounded-2xl font-black text-lg shadow-lg cursor-pointer"
+                    >
+                        {isLoading ? 'Creating Account...' : 'Confirm & Join'}
+                    </Button>
                 </div>
-            </div>
-            <div className="flex gap-4 mt-10">
-                <Button
-                    onClick={onClose}
-                    className="flex-1 h-14 bg-white border border-gray-200 text-gray-500 rounded-2xl font-bold transition-all cursor-pointer"
-                >
-                    Back
-                </Button>
-                <Button className="flex-[2] h-14 bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] rounded-2xl font-black text-lg shadow-lg cursor-pointer">
-                    Confirm & Join
-                </Button>
-            </div>
-        </Card>
-    </div>
-);
+            </Card>
+        </div>
+    );
+};
 
 // --- HELPERS ---
 
@@ -906,7 +941,7 @@ export default function RegisterPage() {
             {showModal && (
                 <ConfirmationModal
                     onClose={() => setShowModal(false)}
-                    formData={formData}
+                    formData={{ ...formData, seniorId: idPreview, termsAccepted: agreed }}
                     selectedPlan={selectedPlan}
                     plans={plans}
                 />

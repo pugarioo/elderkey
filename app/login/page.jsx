@@ -1,11 +1,54 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DigitalIdCard from "@/components/custom/DigitalIdCard";
 import DottedBG from "@/components/custom/dottedBg";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+    const router = useRouter();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                router.refresh(); // Refresh to update server components/cookies
+                router.push('/dashboard'); // Redirect to dashboard
+            } else {
+                const data = await res.json();
+                setError(data.error || 'Login failed');
+            }
+        } catch (err) {
+            console.error(err);
+            setError('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="relative h-[calc(100vh-4rem)] w-full flex items-center justify-center p-4">
             <DottedBG />
@@ -17,24 +60,41 @@ export default function LoginPage() {
                         <p className="text-gray-500">Enter your details to access your account.</p>
                     </div>
 
-                    <form className="flex flex-col gap-4">
+                    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                        {error && (
+                            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm font-medium">
+                                {error}
+                            </div>
+                        )}
                         <div className="space-y-2">
                             <Input
                                 type="text"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
                                 placeholder="Email address or phone number"
                                 className="h-12 bg-white"
+                                required
                             />
                         </div>
                         <div className="space-y-2">
                             <Input
                                 type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
                                 placeholder="Password"
                                 className="h-12 bg-white"
+                                required
                             />
                         </div>
 
-                        <Button className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90 mt-2">
-                            Log In
+                        <Button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90 mt-2"
+                        >
+                            {isLoading ? 'Logging In...' : 'Log In'}
                         </Button>
 
                         <div className="text-center mt-2">
@@ -50,9 +110,11 @@ export default function LoginPage() {
                         </div>
 
                         <div className="text-center">
-                            <Button variant="outline" className="h-10 border-primary text-primary hover:bg-primary/5 font-bold">
-                                Create new account
-                            </Button>
+                            <Link href="/register">
+                                <Button variant="outline" className="h-10 border-primary text-primary hover:bg-primary/5 font-bold">
+                                    Create new account
+                                </Button>
+                            </Link>
                         </div>
                     </form>
                 </div>

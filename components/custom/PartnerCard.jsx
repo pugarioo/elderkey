@@ -125,7 +125,7 @@ const PartnerCard = ({
     );
 
     if (id && !isLocked) {
-        return <Link href={`/partners/${id}`} className="block w-full">{CardContent}</Link>;
+        return <Link href={`/dashboard/partners/${id}`} className="block w-full">{CardContent}</Link>;
     }
 
     return CardContent;

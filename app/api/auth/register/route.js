@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { SignJWT } from 'jose';
 import { createUser, getUserByEmail } from '@/lib/db';
+import { cookies } from 'next/headers';
+
+const SECRET_KEY = process.env.JWT_SECRET || 'secret-key-change-me'; // In production, use environment variable
+const key = new TextEncoder().encode(SECRET_KEY);
 
 export async function POST(req) {
     try {
@@ -35,10 +40,36 @@ export async function POST(req) {
             termsAccepted: body.termsAccepted ? 1 : 0
         });
 
-        // Remove password from response
-        const { password: _, ...userWithoutPassword } = newUser;
+        // ---------------------------------------------------------
+        // AUTO LOGIN LOGIC (Same as Login Route)
+        // ---------------------------------------------------------
 
-        return NextResponse.json({ user: userWithoutPassword }, { status: 201 });
+        // Generate JWT
+        const alg = 'HS256';
+        const jwt = await new SignJWT({
+            id: newUser.id,
+            email: newUser.email,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName
+        })
+            .setProtectedHeader({ alg })
+            .setIssuedAt()
+            .setExpirationTime('7d') // 7 days expiration for persistent login
+            .sign(key);
+
+        // Set Cookie
+        const response = NextResponse.json({ success: true, user: newUser }, { status: 201 });
+
+        (await cookies()).set('auth_token', jwt, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+            path: '/',
+        });
+
+        return response;
+
     } catch (error) {
         console.error('Registration error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

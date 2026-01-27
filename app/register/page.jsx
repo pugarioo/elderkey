@@ -526,8 +526,9 @@ const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
             });
 
             if (res.ok) {
-                // If registration successful, redirect to login
-                router.push('/login');
+                // If registration successful, router refresh then redirect to dashboard
+                router.refresh();
+                router.push('/dashboard');
             } else {
                 const errorData = await res.json();
                 alert(errorData.error || 'Registration failed');

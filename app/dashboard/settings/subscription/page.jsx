@@ -44,7 +44,7 @@ const page = () => {
         if (planName === currentPlan) return;
         setLoading(true);
         try {
-            const res = await fetch("/api/auth/update-plan", {
+            const res = await fetch("/api/billing/plan", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ plan: planName }),

@@ -31,7 +31,7 @@ export default function SettingsPayment() {
 
     const fetchMethods = async () => {
         try {
-            const res = await fetch('/api/auth/payment-methods');
+            const res = await fetch('/api/billing/payment-methods');
             if (res.ok) {
                 const data = await res.json();
                 setMethods(data.methods || []);
@@ -45,7 +45,7 @@ export default function SettingsPayment() {
 
     const fetchPayments = async () => {
         try {
-            const res = await fetch('/api/auth/payments');
+            const res = await fetch('/api/billing/payments');
             if (res.ok) {
                 const data = await res.json();
                 setPayments(data.payments || []);
@@ -65,7 +65,7 @@ export default function SettingsPayment() {
     const handleDeleteMethod = async (id) => {
         if (!confirm('Are you sure you want to remove this payment method?')) return;
         try {
-            const res = await fetch(`/api/auth/payment-methods?id=${id}`, {
+            const res = await fetch(`/api/billing/payment-methods?id=${id}`, {
                 method: 'DELETE'
             });
             if (res.ok) {
@@ -78,7 +78,7 @@ export default function SettingsPayment() {
 
     const handleSetDefault = async (id) => {
         try {
-            const res = await fetch('/api/auth/payment-methods', {
+            const res = await fetch('/api/billing/payment-methods', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
@@ -116,7 +116,7 @@ export default function SettingsPayment() {
         };
 
         try {
-            const res = await fetch('/api/auth/payment-methods', {
+            const res = await fetch('/api/billing/payment-methods', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

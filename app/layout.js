@@ -3,6 +3,7 @@ import NavBar from "@/components/custom/navBar";
 import Footer from "@/components/custom/Footer";
 import "./globals.css";
 import { FrictionProvider } from "@/context/FrictionContext";
+import { UserProvider } from "@/context/UserContext";
 
 // const geistSans = Geist({
 //     variable: "--font-geist-sans",
@@ -39,10 +40,12 @@ export default function RootLayout({ children }) {
                 className={`${openSans.variable} ${merriweather.variable} antialiased`}
             >
                 <FrictionProvider>
-                    <NavBar />
-                    {children}
+                    <UserProvider>
+                        <NavBar />
+                        {children}
 
-                    <Footer />
+                        <Footer />
+                    </UserProvider>
                 </FrictionProvider>
             </body>
         </html >

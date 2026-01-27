@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import FontIcon from '@/components/icons/FontIcon';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useUser } from "@/context/UserContext";
 
 const Page = () => {
   // 1. Modal & View State Logic
@@ -18,6 +19,7 @@ const Page = () => {
   const idCardRef = useRef(null);
 
   // 3. Dynamic Data State
+  const { user } = useUser();
   const [userData, setUserData] = useState({
     name: "John Smith",
     plan: "Silver",
@@ -27,26 +29,15 @@ const Page = () => {
   });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.user) {
-            setUserData(prev => ({
-              ...prev,
-              name: data.user.firstName ? `${data.user.firstName} ${data.user.lastName}` : (data.user.name || "John Smith"),
-              plan: data.user.plan || "Bronze",
-              // Keep mock data for fields not in API yet
-            }));
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data", error);
-      }
-    };
-    fetchUser();
-  }, []);
+    if (user) {
+      setUserData(prev => ({
+        ...prev,
+        name: user.firstName ? `${user.firstName} ${user.lastName}` : (user.name || "John Smith"),
+        plan: user.plan || "Bronze",
+        // Keep mock data for fields not in API yet
+      }));
+    }
+  }, [user]);
 
   const searchParams = useSearchParams();
 

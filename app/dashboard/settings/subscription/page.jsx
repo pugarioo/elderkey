@@ -15,9 +15,11 @@ import FontIcon from "@/components/icons/FontIcon";
 import { useRouter } from "next/navigation";
 import { useFriction } from "@/context/FrictionContext";
 import RescueBubble from "@/components/custom/RescueBubble";
+import { useUser } from "@/context/UserContext";
 
 const page = () => {
     const router = useRouter();
+    const { user, refreshUser } = useUser(); // Context hook
     const [currentPlan, setCurrentPlan] = useState("");
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
@@ -34,28 +36,16 @@ const page = () => {
     });
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch("/api/auth/me");
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.user) {
-                        setCurrentPlan(data.user.plan || "Bronze");
-                        setUserData({
-                            name: (data.user.firstName && data.user.lastName ? `${data.user.firstName} ${data.user.lastName}` : data.user.name) || "Your Name",
-                            email: data.user.email || "Your Email",
-                            mobile: data.user.mobileNo || "Your Mobile"
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to fetch user plan", error);
-            } finally {
-                setInitialLoading(false);
-            }
-        };
-        fetchUser();
-    }, []);
+        if (user) {
+            setCurrentPlan(user.plan || "Bronze");
+            setUserData({
+                name: (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.name) || "Your Name",
+                email: user.email || "Your Email",
+                mobile: user.mobileNo || "Your Mobile"
+            });
+            setInitialLoading(false);
+        }
+    }, [user]);
 
     const openConfirmation = (plan) => {
         setSelectedPlan(plan);
@@ -76,7 +66,8 @@ const page = () => {
 
             if (res.ok) {
                 setCurrentPlan(selectedPlan.name);
-                router.refresh();
+                await refreshUser(); // Update context immediately
+                // router.refresh(); // Not strictly needed for navbar now, but keeps server components fresh if any
             } else {
                 const errData = await res.json();
                 console.error("Failed to update plan:", errData);

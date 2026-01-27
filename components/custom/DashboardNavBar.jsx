@@ -4,30 +4,12 @@ import Link from "next/link";
 import Logo from "@/components/icons/logo";
 import FontIcon from "@/components/icons/FontIcon";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useUser } from "@/context/UserContext";
 
 export default function DashboardNavBar() {
     const pathname = usePathname();
     const router = useRouter();
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch('/api/auth/me');
-                if (res.ok) {
-                    const data = await res.json();
-                    setUser(data.user);
-                }
-            } catch (error) {
-                console.error("Failed to fetch user:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUser();
-    }, []);
+    const { user, loading } = useUser();
 
     const handleLogout = async () => {
         try {

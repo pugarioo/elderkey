@@ -98,9 +98,9 @@ const Page = () => {
               </div>
             </div>
             <div className="h-10 w-[1px] bg-white/20 mx-6 opacity-50"></div>
-            <button className="text-[#FFB703] hover:text-[#FB8500] font-sans font-black text-sm tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95">
-              Upgrade
-            </button>
+            <Button asChild className="text-[#FFB703] bg-transparent hover:bg-transparent hover:text-[#FB8500] font-sans font-black text-sm tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95">
+              <Link href="/dashboard/settings/subscription">Upgrade</Link>
+            </Button>
           </div>
         </header>
 

@@ -40,6 +40,15 @@ export default function SettingsPage() {
         fetchUser();
     }, [router]);
 
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            router.push('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
     const planStyles = {
         Bronze: {
             text: "text-[#CD7F32]",
@@ -231,12 +240,12 @@ export default function SettingsPage() {
                 </div>
                 {/* Logout Area */}
                 <div className="mt-12 text-center">
-                    <Link
-                        href="/"
-                        className="inline-block w-full md:w-auto min-w-[300px] bg-white border border-red-500 text-red-500 font-bold py-4 rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all shadow-sm"
+                    <button
+                        onClick={handleLogout}
+                        className="inline-block w-full md:w-auto min-w-[300px] bg-white border border-red-500 text-red-500 font-bold py-4 rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all shadow-sm cursor-pointer"
                     >
                         Log Out
-                    </Link>
+                    </button>
                     <p className="mt-8 text-gray-400 text-sm font-medium">
                         ElderKey Version 2.0.0 (Premium)
                     </p>

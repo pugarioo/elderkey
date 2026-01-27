@@ -1,10 +1,15 @@
-
-import { updateUserPlan } from '@/lib/db';
+import { updateUserPlan, createPayment } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'secret-key-change-me';
 const key = new TextEncoder().encode(SECRET_KEY);
+
+const PLAN_PRICES = {
+    'Bronze': 0,
+    'Silver': 15,
+    'Gold': 29
+};
 
 export async function POST(req) {
     try {
@@ -28,6 +33,23 @@ export async function POST(req) {
         console.log(`[UpdatePlan] User: ${userEmail}, Plan: ${plan}, Success: ${success}`);
 
         if (success) {
+            // Record the payment
+            try {
+                const amount = PLAN_PRICES[plan];
+                createPayment({
+                    userEmail: userEmail,
+                    amount: amount,
+                    plan: plan,
+                    currency: 'USD',
+                    status: 'SUCCESS'
+                });
+                console.log(`[UpdatePlan] Payment recorded for ${userEmail}: $${amount}`);
+            } catch (paymentError) {
+                console.error(`[UpdatePlan] Failed to record payment for ${userEmail}:`, paymentError);
+                // We don't fail the request if payment recording fails, but we log it.
+                // In a real system, we might want transactionality.
+            }
+
             return new Response(JSON.stringify({ message: 'Plan updated successfully' }), { status: 200 });
         } else {
             console.error(`[UpdatePlan] Failed to update. User found? Email: ${userEmail}`);

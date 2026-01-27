@@ -137,7 +137,7 @@ export default function SettingsPage() {
                             <span className={`px-3 py-1 rounded-lg text-sm font-bold uppercase tracking-wider ${currentPlanStyle.bg} ${currentPlanStyle.text}`}>
                                 <FontIcon icon="fa-solid fa-crown" style={currentPlanStyle.iconColor} /> {userData.plan} Member
                             </span>
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Payment Methods */}
@@ -159,7 +159,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Privacy */}
@@ -181,7 +181,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Notifications */}
@@ -203,7 +203,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <i className="fa-solid fa-chevron-right text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                            <FontIcon icon="fa-solid fa-chevron-right" style="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                     </Link>
                     {/* Help */}

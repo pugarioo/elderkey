@@ -8,7 +8,7 @@ export default function SettingsNotifications() {
             <DottedBG />
             <div className="container mx-auto px-6 py-12 max-w-3xl relative z-10">
                 <div className="mb-10">
-                    <Link href="/settings" className="text-gray-400 hover:text-dark font-bold text-xs uppercase tracking-widest mb-3 inline-block transition-colors">
+                    <Link href="/dashboard/settings" className="text-gray-400 hover:text-dark font-bold text-xs uppercase tracking-widest mb-3 inline-block transition-colors">
                         <FontIcon icon="fa-solid fa-chevron-left" /> Settings
                     </Link>
                     <h1 className="text-3xl md:text-4xl font-serif font-black text-dark mb-2">Notifications</h1>

@@ -199,10 +199,10 @@ const Page = () => {
                     <div className="flex justify-between items-start">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
-                          <FontIcon icon="fa-solid fa-key" className="text-[#FFB703] text-lg" />
+                          <FontIcon icon="fa-solid fa-key" style="text-[#FFB703] text-lg" />
                           <span className="font-serif text-xl font-extrabold tracking-tight">ElderKey</span>
                         </div>
-                        <p className="text-[9px] md:text-[10px] text-white/50 tracking-[0.2em] uppercase font-black">Official Member ID</p>
+                        <p className="text-[9px] md:text-[10px] text-[#FFB703] tracking-[0.2em] uppercase font-black">Official Member ID</p>
                       </div>
                       <div className="p-1.5 bg-white rounded-md shadow-lg">
                         <div className="w-12 h-12 md:w-14 md:h-14 bg-black flex items-center justify-center">
@@ -227,7 +227,7 @@ const Page = () => {
                         <p className="font-mono text-[10px] md:text-sm tracking-widest">{userData.idNumber}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[8px] md:text-[9px] text-white/40 font-bold uppercase tracking-widest">Valid Until</p>
+                        <p className="text-[8px] md:text-[9px] text-[#FFB703] font-bold uppercase tracking-widest">Valid Until</p>
                         <p className="font-mono text-[10px] md:text-sm tracking-widest">{userData.validUntil}</p>
                       </div>
                     </div>
@@ -257,12 +257,12 @@ const Page = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4 w-full mb-4 flex-shrink-0">
-              <Button className="bg-[#023047]/80 hover:bg-[#023047] text-white rounded-xl cursor-pointer py-6 border border-white/10 flex gap-2 text-xs md:text-sm">
+              <Button className="bg-[#3e4e5e80]/80 hover:bg-[#023047] text-white rounded-xl cursor-pointer py-6 border border-white/10 flex gap-2 text-xs md:text-sm">
                 <FontIcon icon="fa-solid fa-file-pdf" style="text-red-500" /> Save as PDF
               </Button>
               <Button 
                 onClick={downloadPng}
-                className="bg-[#023047]/80 hover:bg-[#023047] text-white rounded-xl cursor-pointer py-6 border border-white/10 flex gap-2 text-xs md:text-sm"
+                className="bg-[#3e4e5e80]/80 hover:bg-[#023047] text-white rounded-xl cursor-pointer py-6 border border-white/10 flex gap-2 text-xs md:text-sm"
               >
                 <FontIcon icon="fa-solid fa-image" style="text-blue-400" /> Save as PNG
               </Button>

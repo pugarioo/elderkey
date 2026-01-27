@@ -5,10 +5,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { config, library } from "@fortawesome/fontawesome-svg-core";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { usePathname } from "next/navigation";
 config.autoAddCss = false;
 library.add(faKey);
 
 const Footer = () => {
+    const pathname = usePathname();
+    if (pathname?.startsWith("/dashboard")) return null;
+
     const currentYear = new Date().getFullYear();
 
     return (

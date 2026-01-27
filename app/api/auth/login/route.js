@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
-import { getUserByEmail } from '@/lib/db';
+import { getUserByIdentifier } from '@/lib/db';
 import { cookies } from 'next/headers';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'secret-key-change-me'; // In production, use environment variable
@@ -10,13 +10,13 @@ const key = new TextEncoder().encode(SECRET_KEY);
 export async function POST(req) {
     try {
         const body = await req.json();
-        const { email, password } = body;
+        const { identifier, password } = body;
 
-        if (!email || !password) {
-            return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+        if (!identifier || !password) {
+            return NextResponse.json({ error: 'Username/Email/Mobile and password are required' }, { status: 400 });
         }
 
-        const user = getUserByEmail(email);
+        const user = getUserByIdentifier(identifier);
         if (!user) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }

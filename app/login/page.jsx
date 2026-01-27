@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 export default function LoginPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        email: '',
+        identifier: '',
         password: ''
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -69,10 +69,10 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <Input
                                 type="text"
-                                name="email"
-                                value={formData.email}
+                                name="identifier"
+                                value={formData.identifier}
                                 onChange={handleInputChange}
-                                placeholder="Email address or phone number"
+                                placeholder="Username, Email, or Mobile Number"
                                 className="h-12 bg-white"
                                 required
                             />

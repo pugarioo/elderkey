@@ -37,16 +37,17 @@ export default function Home() {
                             and healthcare needs. Designed for simplicity
                         </p>
                         <div className="flex items-center justify-center gap-2">
-                            <Button className="h-auto w-auto rounded-4xl py-4 px-7! text-deep-navy font-bold cursor-pointer hover:bg-accent hover:text-white">
-                                <Link href="/register">Create Free Account</Link>
-                                <FontIcon icon="fa-solid fa-arrow-right" />
+                            <Button asChild className="h-auto w-auto rounded-4xl py-4 px-7! text-deep-navy font-bold cursor-pointer hover:bg-accent hover:text-white">
+                                <Link href="/register">Create Free Account
+                                    <FontIcon icon="fa-solid fa-arrow-right" /></Link>
+
                             </Button>
                             <Button className="h-auto w-auto rounded-4xl py-4 px-7! cursor-pointer border-2 border-white text-deep-navy font-bold bg-whites hover:bg-white hover:border-primary">
                                 <FontIcon
                                     icon="fa-solid fa-play"
                                     style="text-primary"
                                 />
-                                See How It Works
+                                <Link href="/">See How It Works</Link>
                             </Button>
                         </div>
                         <div className="flex justify-start items-center gap-1 font-bold">

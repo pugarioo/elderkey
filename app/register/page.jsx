@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DottedBg from "@/components/custom/dottedBg";
 import FontIcon from "@/components/icons/FontIcon";
+import { useFriction } from "@/context/FrictionContext";
+import RescueBubble from "@/components/custom/RescueBubble";
 
 // --- SUB-COMPONENTS ---
 
@@ -778,6 +780,7 @@ export default function RegisterPage() {
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [isWizardMode, setIsWizardMode] = useState(false);
     const [idPreview, setIdPreview] = useState(null);
+    const { stressScore } = useFriction();
 
     const fileInputRef = useRef(null);
 
@@ -928,16 +931,23 @@ export default function RegisterPage() {
             </Card>
 
             {/* Wizard Mode Toggle */}
-            <button
-                onClick={() => setIsWizardMode(!isWizardMode)}
-                className="fixed bottom-8 right-8 w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-50 group cursor-pointer"
-                title="Toggle Wizard Mode"
-            >
-                <FontIcon
-                    icon="fa-wand-magic-sparkles"
-                    className="group-hover:rotate-12 transition-transform"
-                />
-            </button>
+            <div className="fixed bottom-8 right-8 z-[99999] group">
+                {(!isWizardMode && stressScore > 80) && (
+                    <div className="absolute bottom-20 right-0 w-max pointer-events-none">
+                        <RescueBubble text="Struggling? Try Wizard Mode" />
+                    </div>
+                )}
+                <button
+                    onClick={() => setIsWizardMode(!isWizardMode)}
+                    className="fixed bottom-8 right-8 w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-50 group cursor-pointer"
+                    title="Toggle Wizard Mode"
+                >
+                    <FontIcon
+                        icon="fa-wand-magic-sparkles"
+                        className="group-hover:rotate-12 transition-transform"
+                    />
+                </button>
+            </div>
 
             {showModal && (
                 <ConfirmationModal

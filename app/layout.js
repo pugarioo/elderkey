@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Merriweather, Open_Sans } from "next/font/google";
 import NavBar from "@/components/custom/navBar";
 import Footer from "@/components/custom/Footer";
 import "./globals.css";
+import { FrictionProvider } from "@/context/FrictionContext";
 
 // const geistSans = Geist({
 //     variable: "--font-geist-sans",
@@ -37,11 +38,13 @@ export default function RootLayout({ children }) {
             <body
                 className={`${openSans.variable} ${merriweather.variable} antialiased`}
             >
-                <NavBar />
-                {children}
+                <FrictionProvider>
+                    <NavBar />
+                    {children}
 
-                <Footer />
+                    <Footer />
+                </FrictionProvider>
             </body>
-        </html>
+        </html >
     );
 }

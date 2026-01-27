@@ -20,7 +20,7 @@ const page = () => {
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
     const [rescueMode, setRescueMode] = useState(false); // Toggle State
-    
+
     // Modal States
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState(null);
@@ -39,9 +39,9 @@ const page = () => {
                     if (data.user) {
                         setCurrentPlan(data.user.plan || "Bronze");
                         setUserData({
-                            name: data.user.name || "Martha Stewart",
-                            email: data.user.email || "martha.stewart@test.com",
-                            mobile: data.user.mobile || "097599984111"
+                            name: (data.user.firstName && data.user.lastName ? `${data.user.firstName} ${data.user.lastName}` : data.user.name) || "Your Name",
+                            email: data.user.email || "Your Email",
+                            mobile: data.user.mobileNo || "Your Mobile"
                         });
                     }
                 }
@@ -61,7 +61,7 @@ const page = () => {
 
     const handleConfirmUpdate = async () => {
         if (!selectedPlan || selectedPlan.name === currentPlan) return;
-        
+
         setIsModalOpen(false);
         setLoading(true);
         try {
@@ -108,15 +108,17 @@ const page = () => {
             <DottedBg />
 
             {/* Rescue Mode Toggle Button */}
-            <div className="fixed bottom-10 right-10 z-[50]">
-                <Button 
-                    onClick={() => setRescueMode(!rescueMode)}
-                    className={`rounded-full shadow-2xl px-6 py-6 font-bold transition-all ${rescueMode ? "bg-[#023047] text-white" : "bg-[#FFB703] text-[#023047]"}`}
-                >
-                    <FontIcon icon={rescueMode ? "fa-table-list" : "fa-life-ring"} className="mr-2" />
-                    {rescueMode ? "Back to Table" : "Rescue Mode"}
-                </Button>
-            </div>
+            {/* Rescue Mode Toggle Button */}
+            <button
+                onClick={() => setRescueMode(!rescueMode)}
+                className="fixed bottom-8 right-8 w-16 h-16 bg-[#023047] hover:bg-[#FFB703] text-white hover:text-[#023047] rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300 z-50 group cursor-pointer"
+                title={rescueMode ? "Back to Table" : "Rescue Mode"}
+            >
+                <FontIcon
+                    icon={rescueMode ? "fa-table-list" : "fa-life-ring"}
+                    className="group-hover:rotate-12 transition-transform"
+                />
+            </button>
 
             <main className="relative z-10 max-w-6xl mx-auto px-6 pt-20 flex flex-col items-center">
                 <div className="text-center mb-12">
@@ -179,7 +181,7 @@ const page = () => {
                                             <TableCell key={i} className={`text-center p-6 border-r last:border-r-0 border-gray-100 ${tiers[i].name === currentPlan ? "bg-[#FFB703]/5" : ""}`}>
                                                 {typeof cell.val === "boolean" ? (
                                                     cell.val ? (
-                                                        <FontIcon icon="fa-check" style="text-[#FB8500] text-xl"/>
+                                                        <FontIcon icon="fa-check" style="text-[#FB8500] text-xl" />
                                                     ) : (
                                                         <FontIcon icon="fa-xmark" style="text-[#8ECAE6] text-xl" />
                                                     )
@@ -204,7 +206,7 @@ const page = () => {
                                                     <Button
                                                         onClick={() => openConfirmation(tier)}
                                                         disabled={loading}
-                                                        className={`w-full rounded-xl py-6 ${tier.name === "Gold" ? "bg-[#8ECAE6] text-white" : "border border-gray-200 text-gray-400"} font-bold transition-all duration-300 cursor-pointer uppercase text-xs tracking-widest`}
+                                                        className={`w-full rounded-xl py-6 ${tier.name === "Gold" ? "bg-[#8ECAE6] text-white" : "border border-gray-200 text-gray-100"} font-bold transition-all duration-300 cursor-pointer uppercase text-xs tracking-widest`}
                                                     >
                                                         {loading ? "..." : `Select ${tier.name}`}
                                                     </Button>
@@ -222,7 +224,7 @@ const page = () => {
                         {tiers.map((tier) => {
                             const isCurrent = currentPlan === tier.name;
                             return (
-                                <div 
+                                <div
                                     key={tier.name}
                                     onClick={() => !isCurrent && openConfirmation(tier)}
                                     className={`group relative flex items-center p-10 rounded-[2rem] shadow-card cursor-pointer transition-all duration-300 border-2

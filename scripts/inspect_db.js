@@ -1,5 +1,9 @@
 const Database = require('better-sqlite3');
-const db = new Database('./local.db', { readonly: true });
+const path = require('path');
+
+// Go up one level to root to find local.db
+const dbPath = path.join(__dirname, '..', 'local.db');
+const db = new Database(dbPath, { readonly: true });
 
 console.log('Tables:');
 const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();

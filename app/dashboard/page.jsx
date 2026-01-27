@@ -3,10 +3,11 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { toPng } from 'html-to-image';
 import DottedBg from '@/components/custom/dottedBg';
-import NavBar from '@/components/custom/navBar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import FontIcon from '@/components/icons/FontIcon';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Page = () => {
   // 1. Modal & View State Logic
@@ -67,7 +68,7 @@ const Page = () => {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
           <div className="space-y-1">
             <h1 className="font-serif font-black text-4xl md:text-5xl tracking-tight text-[#023047]">
-              Good Morning, {userData.name.split(' ')[0]}
+              Good Morning, {userData.firstName}
             </h1>
             <p className="font-sans text-lg text-[#52796F]">
               Concierge updates & benefits summary.
@@ -76,9 +77,9 @@ const Page = () => {
 
           <div 
             className="bg-[#023047] rounded-[1.25rem] flex items-center shadow-lg transition-all duration-500 hover:brightness-110 hover:shadow-2xl cursor-default"
-            style={{ 
-                padding: `${0.7 * uiScale}rem ${1.5 * uiScale}rem`,
-                transform: `scale(${uiScale})` 
+            style={{
+              padding: `${0.7 * uiScale}rem ${1.5 * uiScale}rem`,
+              transform: `scale(${uiScale})`
             }}
           >
             <div className="flex items-center gap-4">
@@ -92,7 +93,7 @@ const Page = () => {
                 <span className="text-[10px] text-gray-400 font-sans font-bold tracking-widest uppercase">
                   Current Plan
                 </span>
-                <span className="text-white font-serif text-xl font-bold leading-tight">
+                <span className={`text-white font-serif text-xl font-bold leading-tight ${currentPlanStyle.text}`}>
                   {userData.plan} Member
                 </span>
               </div>
@@ -111,15 +112,11 @@ const Page = () => {
               <div className="w-12 h-12 bg-[#FB8500] rounded-xl flex items-center justify-center mb-6 shadow-md">
                 <FontIcon icon="fa-solid fa-store" style="text-white text-lg" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2">Directory</h3>
-              <p className="font-sans text-sm opacity-70 leading-relaxed">
-                Browse curated partners and exclusive local offers.
-              </p>
-            </div>
-            <button className="mt-6 flex items-center gap-2 text-[#FB8500] text-sm font-bold group-hover:gap-3 transition-all">
-              Explore <FontIcon icon="fa-solid fa-arrow-right" className="" />
-            </button>
-          </Card>
+              <button className="mt-6 flex items-center gap-2 text-[#FB8500] text-sm font-bold group-hover:gap-3 transition-all">
+                Explore <FontIcon icon="fa-solid fa-arrow-right" className="" />
+              </button>
+            </Card>
+          </Link>
 
           <Card 
             onClick={() => setIsIdCardOpen(true)}
@@ -129,15 +126,11 @@ const Page = () => {
               <div className="w-12 h-12 bg-[#FFB703] rounded-xl flex items-center justify-center mb-6 shadow-md">
                 <FontIcon icon="fa-solid fa-id-card" style="text-[#001D3D]" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2">My ID Card</h3>
-              <p className="font-sans text-sm opacity-70 leading-relaxed">
-                Your secure pass for checkups and pharmacies.
-              </p>
-            </div>
-            <button className="mt-6 flex items-center gap-2 text-[#FB8500] text-sm font-bold group-hover:gap-3 transition-all">
-              View Card <FontIcon icon="fa-solid fa-eye" className="" />
-            </button>
-          </Card>
+              <button className="mt-6 flex items-center gap-2 text-[#FB8500] text-sm font-bold group-hover:gap-3 transition-all">
+                View Card <FontIcon icon="fa-solid fa-eye" className="" />
+              </button>
+            </Card>
+          </Link>
 
           <Card className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group">
             <div>

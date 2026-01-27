@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import PartnerCard from '@/components/custom/PartnerCard';
-import DottedBG from './dottedBg';
+import DottedBG from '@/components/custom/dottedBg';
 import {
     faPrescriptionBottleMedical,
     faHospital,

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import FontIcon from '@/components/icons/FontIcon';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const Page = () => {
   // 1. Modal & View State Logic
@@ -46,6 +47,14 @@ const Page = () => {
     };
     fetchUser();
   }, []);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('showId') === 'true') {
+      setIsIdCardOpen(true);
+    }
+  }, [searchParams]);
 
   const [uiScale] = useState(1);
 

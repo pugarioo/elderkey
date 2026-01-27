@@ -47,7 +47,7 @@ export default function DashboardNavBar() {
     const navLinks = [
         { name: "Home", href: "/dashboard" },
         { name: "Directory", href: "/dashboard/partners" },
-        { name: "My ID Card", href: "/dashboard/id-card" },
+        { name: "My ID Card", href: "/dashboard?showId=true" },
     ];
 
     return (

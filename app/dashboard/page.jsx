@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { toPng } from 'html-to-image';
 import DottedBg from '@/components/custom/dottedBg';
 import { Card } from '@/components/ui/card';
@@ -17,13 +17,35 @@ const Page = () => {
   const idCardRef = useRef(null);
 
   // 3. Dynamic Data State
-  const [userData] = useState({
+  const [userData, setUserData] = useState({
     name: "John Smith",
     plan: "Silver",
     idNumber: "1239-8472-ELDR",
     validUntil: "DEC 2028",
     emergencyContact: "(555) 0123-4567"
   });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setUserData(prev => ({
+              ...prev,
+              name: data.user.firstName ? `${data.user.firstName} ${data.user.lastName}` : (data.user.name || "John Smith"),
+              plan: data.user.plan || "Bronze",
+              // Keep mock data for fields not in API yet
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const [uiScale] = useState(1);
 

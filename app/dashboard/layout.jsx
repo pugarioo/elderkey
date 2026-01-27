@@ -8,7 +8,6 @@ export default function DashboardLayout({ children }) {
             <main className="flex-grow">
                 {children}
             </main>
-            <Footer />
         </div>
     );
 }

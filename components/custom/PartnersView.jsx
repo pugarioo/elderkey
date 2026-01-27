@@ -62,9 +62,26 @@ export default function PartnersView({ partners }) {
         'Gold': 3
     };
 
-    // Filter Logic
-    const filteredPartners = useMemo(() => {
+    // 1. Accessibility Filter (Tier / Rescue Mode) - BASE for everything in Rescue Mode
+    const accessiblePartners = useMemo(() => {
         return partners.filter(partner => {
+            // In normal mode, everyone is accessible for the sidebar calculation (unless we want to hide locked there too? User said 'in rescue mode... hide empty'. So normal mode likely shows all categories)
+            if (!rescueMode) return true;
+
+            const pTier = partner.tier ? partner.tier.charAt(0).toUpperCase() + partner.tier.slice(1).toLowerCase() : 'Bronze';
+            const uPlan = userPlan ? userPlan.charAt(0).toUpperCase() + userPlan.slice(1).toLowerCase() : 'Bronze';
+
+            const partnerLevel = tierLevels[pTier] || 1;
+            const userLevel = tierLevels[uPlan] || 1;
+
+            return partnerLevel <= userLevel;
+        });
+    }, [rescueMode, partners, userPlan]);
+
+
+    // 2. Display Filter (Applied on top of Accessible Partners)
+    const displayPartners = useMemo(() => {
+        return accessiblePartners.filter(partner => {
             // Search Filter
             const matchesSearch = partner.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 partner.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -72,32 +89,21 @@ export default function PartnersView({ partners }) {
             // Category Filter
             let matchesCategory = true;
             if (selectedCategory !== 'All Partners') {
-                // Direct match since DB is normalized
                 matchesCategory = partner.field === selectedCategory;
             }
 
             return matchesSearch && matchesCategory;
         });
-    }, [searchQuery, selectedCategory, partners]);
+    }, [searchQuery, selectedCategory, accessiblePartners]);
 
-    // Filter for Rescue Mode (Case-Insensitive Safer Check)
-    const accessiblePartners = useMemo(() => {
-        if (!rescueMode) return filteredPartners;
 
-        return filteredPartners.filter(partner => {
-            const pTier = partner.tier ? partner.tier.charAt(0).toUpperCase() + partner.tier.slice(1).toLowerCase() : 'Bronze';
-            const uPlan = userPlan ? userPlan.charAt(0).toUpperCase() + userPlan.slice(1).toLowerCase() : 'Bronze';
-
-            const partnerLevel = tierLevels[pTier] || 1;
-            const userLevel = tierLevels[uPlan] || 1;
-
-            // Strict Less Than or Equal check.
-            return partnerLevel <= userLevel;
-        });
-    }, [rescueMode, filteredPartners, userPlan]);
-
-    // Dynamically derive categories from data
-    const categories = ['All Partners', ...new Set(partners.map(p => p.field))];
+    // 3. Category Source (Sidebar) - Should be based on WHAT IS AVAILABLE, not what is selected
+    const categories = useMemo(() => {
+        // If Rescue Mode: Use accessiblePartners (Tier filtered only)
+        // If Normal Mode: Use all partners
+        const source = rescueMode ? accessiblePartners : partners;
+        return ['All Partners', ...new Set(source.map(p => p.field))];
+    }, [rescueMode, accessiblePartners, partners]);
 
     return (
         <div className="min-h-screen bg-slate-50 pt-24 pb-20 pl-40 pr-40 relative overflow-hidden">
@@ -164,7 +170,7 @@ export default function PartnersView({ partners }) {
                             </div>
                         )}
 
-                        {filteredPartners.length === 0 ? (
+                        {displayPartners.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
                                 <div className="text-slate-300 text-6xl mb-4">?</div>
                                 <h3 className="text-xl font-bold text-slate-400">No partners found</h3>
@@ -174,7 +180,7 @@ export default function PartnersView({ partners }) {
                             <>
                                 {rescueMode ? (
                                     <div className="flex flex-col gap-4 animate-in fade-in duration-500">
-                                        {accessiblePartners.map(partner => (
+                                        {displayPartners.map(partner => (
                                             <div key={partner.id} className="bg-white p-6 rounded-2xl shadow-md border-l-8 border-[#FFB703] flex items-center justify-between hover:scale-[1.01] transition-transform cursor-pointer">
                                                 <div>
                                                     <h3 className="font-serif text-2xl font-bold text-[#023047] mb-1">{partner.name}</h3>
@@ -185,7 +191,7 @@ export default function PartnersView({ partners }) {
                                                 </button>
                                             </div>
                                         ))}
-                                        {accessiblePartners.length === 0 && (
+                                        {displayPartners.length === 0 && (
                                             <div className="text-center py-10 opacity-50">
                                                 <p>No available partners match your current plan and search.</p>
                                             </div>
@@ -193,7 +199,7 @@ export default function PartnersView({ partners }) {
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {filteredPartners.map((partner) => {
+                                        {displayPartners.map((partner) => {
                                             const partnerLevel = tierLevels[partner.tier] || 1;
                                             const userLevel = tierLevels[userPlan] || 1;
                                             const isLocked = partnerLevel > userLevel;

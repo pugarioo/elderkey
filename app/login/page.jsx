@@ -96,7 +96,7 @@ export default function LoginPage() {
                         <Button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90 mt-2"
+                            className="w-full h-12 text-lg font-bold bg-primary cursor-pointer hover:bg-primary/90 mt-2"
                         >
                             {isLoading ? 'Logging In...' : 'Log In'}
                         </Button>
@@ -115,7 +115,7 @@ export default function LoginPage() {
 
                         <div className="text-center">
                             <Link href="/register">
-                                <Button variant="outline" className="h-10 border-primary text-primary hover:bg-primary/5 font-bold">
+                                <Button variant="outline" className="h-10 border-primary cursor-pointer text-primary hover:bg-primary/5 font-bold">
                                     Create new account
                                 </Button>
                             </Link>

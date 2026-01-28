@@ -19,7 +19,7 @@ export default function SettingsHelp() {
                 <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Contact Us</h2>
                 <div className="grid md:grid-cols-3 gap-4 mb-12">
                     {/* Chat */}
-                    <button className="bg-white rounded-2xl p-6 text-center shadow-card hover:-translate-y-1 transition-all border border-teal-50 hover:border-teal-200 group">
+                    <button className="bg-white rounded-2xl p-6 text-center shadow-card hover:-translate-y-1 transition-all border border-teal-50 cursor-pointer hover:border-teal-200 group">
                         <div className="w-14 h-14 rounded-full bg-teal-50 text-teal-500 mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
                             <FontIcon icon="fa-solid fa-comments" />
                         </div>
@@ -27,7 +27,7 @@ export default function SettingsHelp() {
                         <div className="text-xs text-gray-400 mt-1 uppercase tracking-wide font-bold">Instant</div>
                     </button>
                     {/* Email */}
-                    <button className="bg-white rounded-2xl p-6 text-center shadow-card hover:-translate-y-1 transition-all border border-teal-50 hover:border-teal-200 group">
+                    <button className="bg-white rounded-2xl p-6 text-center shadow-card hover:-translate-y-1 transition-all border border-teal-50 cursor-pointer hover:border-teal-200 group">
                         <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-500 mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
                             <FontIcon icon="fa-solid fa-envelope" />
                         </div>
@@ -35,7 +35,7 @@ export default function SettingsHelp() {
                         <div className="text-xs text-gray-400 mt-1 uppercase tracking-wide font-bold">Replies in 24h</div>
                     </button>
                     {/* Call */}
-                    <button className="bg-white rounded-2xl p-6 text-center shadow-card hover:-translate-y-1 transition-all border border-teal-50 hover:border-teal-200 group">
+                    <button className="bg-white rounded-2xl p-6 text-center shadow-card hover:-translate-y-1 transition-all border border-teal-50 cursor-pointer hover:border-teal-200 group">
                         <div className="w-14 h-14 rounded-full bg-orange-50 text-orange-500 mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
                             <FontIcon icon="fa-solid fa-phone" />
                         </div>
@@ -91,7 +91,7 @@ export default function SettingsHelp() {
                 {/* Ticket Form Optional */}
                 <div className="mt-8 text-center pt-8 border-t border-gray-200">
                     <p className="text-gray-400 mb-4">Still need help? Send us a message.</p>
-                    <Button className="bg-white border border-gray-300 text-dark font-bold py-3 px-8 rounded-full hover:bg-gray-50 transition-colors">
+                    <Button className="bg-white border border-gray-300 text-dark font-bold py-3 px-8 rounded-full hover:bg-gray-50 transition-colors cursor-pointer shadow-card">
                         Submit a Support Ticket
                     </Button>
                 </div>

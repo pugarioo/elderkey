@@ -20,6 +20,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useFriction } from '@/context/FrictionContext';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 // Icon Map
 const iconMap = {
@@ -184,15 +186,17 @@ export default function PartnersView({ partners }) {
                                 {rescueMode ? (
                                     <div className="flex flex-col gap-4 animate-in fade-in duration-500">
                                         {displayPartners.map(partner => (
-                                            <div key={partner.id} className="bg-white p-6 rounded-2xl shadow-md border-l-8 border-[#FFB703] flex items-center justify-between hover:scale-[1.01] transition-transform cursor-pointer">
-                                                <div>
-                                                    <h3 className="font-serif text-2xl font-bold text-[#023047] mb-1">{partner.name}</h3>
-                                                    <p className="text-[#52796F] font-bold uppercase tracking-wider text-sm">{partner.field}</p>
+                                            <Link href={`/dashboard/partners/${partner.id}`} key={partner.id}>
+                                                <div className="bg-white p-6 rounded-2xl shadow-md border-l-8 border-[#FFB703] flex items-center justify-between hover:scale-[1.01] transition-transform cursor-pointer">
+                                                    <div>
+                                                        <h3 className="font-serif text-2xl font-bold text-[#023047] mb-1">{partner.name}</h3>
+                                                        <p className="text-[#52796F] font-bold uppercase tracking-wider text-sm">{partner.field}</p>
+                                                    </div>
+                                                    <Link href={`/dashboard/partners/${partner.id}`} className="bg-[#023047] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#FB8500] transition-colors">
+                                                        View
+                                                    </Link>
                                                 </div>
-                                                <button className="bg-[#023047] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#FB8500] transition-colors">
-                                                    View
-                                                </button>
-                                            </div>
+                                            </Link>
                                         ))}
                                         {displayPartners.length === 0 && (
                                             <div className="text-center py-10 opacity-50">

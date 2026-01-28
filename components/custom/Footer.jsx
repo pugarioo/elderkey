@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { config, library } from "@fortawesome/fontawesome-svg-core";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+
 config.autoAddCss = false;
 library.add(faKey);
 

@@ -1,17 +1,22 @@
 import DottedBG from "@/components/custom/dottedBg";
+import DigitalIdCard from "@/components/custom/DigitalIdCard";
 import FontIcon from "@/components/icons/FontIcon";
 import { Button } from "@/components/ui/button";
+import PartnerMarquee from "@/components/custom/PartnerMarquee";
+import Link from "next/link";
 
 export default function Home() {
     return (
-        <div className=" pl-40 pr-40 pt-16 ">
-            <div className="relative">
-                <DottedBG />
+        <div className="relative min-h-screen">
+            <DottedBG />
+            <div className="pl-40 pr-40 pt-6 relative z-10">
                 <div
                     id="hero-section"
-                    className="relative z-10 flex items-center justify-between h-[calc(80vh-4rem)] w-full mt-0 "
+                    className="relative z-10 flex items-center justify-between h-[calc(95vh-4rem)] w-full mt-0 "
                 >
-                    <div className="w-1/2 h-full flex flex-col justify-center items-start gap-8">
+                    {/* ... hero content ... */}
+                    <div className="w-1/2 h-full! flex flex-col justify-center items-start gap-8">
+                        {/* ... */}
                         <div className="flex items-center justify-center gap-2 text-primary border w-fit p-0.5 pr-2 pl-2 rounded-3xl border-primary">
                             <FontIcon
                                 icon="fa-solid fa-circle"
@@ -32,16 +37,17 @@ export default function Home() {
                             and healthcare needs. Designed for simplicity
                         </p>
                         <div className="flex items-center justify-center gap-2">
-                            <Button className="h-auto w-auto rounded-4xl py-4 px-7! text-deep-navy font-bold cursor-pointer hover:bg-accent hover:text-white">
-                                Create Free Account
-                                <FontIcon icon="fa-solid fa-arrow-right" />
+                            <Button asChild className="h-auto w-auto rounded-4xl py-4 px-7! text-deep-navy font-bold cursor-pointer hover:bg-accent hover:text-white">
+                                <Link href="/register">Create Free Account
+                                    <FontIcon icon="fa-solid fa-arrow-right" /></Link>
+
                             </Button>
                             <Button className="h-auto w-auto rounded-4xl py-4 px-7! cursor-pointer border-2 border-white text-deep-navy font-bold bg-whites hover:bg-white hover:border-primary">
                                 <FontIcon
                                     icon="fa-solid fa-play"
                                     style="text-primary"
                                 />
-                                See How It Works
+                                <Link href="/">See How It Works</Link>
                             </Button>
                         </div>
                         <div className="flex justify-start items-center gap-1 font-bold">
@@ -62,61 +68,15 @@ export default function Home() {
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[24rem] bg-gradient-to-br from-orange-200/60 via-transparent to-transparent blur-3xl rounded-full -z-10"></div>
 
                         {/* Main Card */}
-                        <div className="bg-white rounded-[2rem] p-8 w-[34rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] z-10 relative">
-                            <div className="flex justify-between items-start mb-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                                        <FontIcon
-                                            icon="fa-solid fa-user"
-                                            style="text-gray-400 text-lg"
-                                        />
-                                    </div>
-                                    <div>
-                                        <p className="text-deep-navy font-bold text-lg leading-tight">
-                                            John Smith
-                                        </p>
-                                        <p className="text-gray-400 text-xs font-bold">
-                                            Silver Member
-                                        </p>
-                                    </div>
-                                </div>
-                                <FontIcon
-                                    icon="fa-solid fa-qrcode"
-                                    style="text-deep-navy text-3xl"
-                                />
-                            </div>
-
-                            {/* Divider */}
-                            <div className="h-px bg-gray-100 w-full mb-6"></div>
-
-                            <div className="bg-gray-50 rounded-2xl p-4 mb-10 flex items-center gap-4">
-                                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                                    <FontIcon
-                                        icon="fa-solid fa-pills"
-                                        style="text-secondary text-sm"
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <p className="text-deep-navy font-bold text-sm">
-                                        Mercury Drug
-                                    </p>
-                                    <p className="text-secondary text-[10px] font-extrabold tracking-wide uppercase">
-                                        15% Discount Applied
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="text-center">
-                                <p className="text-gray-300 text-[10px] font-bold tracking-[0.2em] uppercase">
-                                    Official Digital ID
-                                </p>
-                            </div>
-                        </div>
+                        <DigitalIdCard className="z-10 relative" />
                     </div>
                 </div>
             </div>
+
+            <PartnerMarquee />
+
             {/* Why Section */}
-            <div className="py-24">
+            <div className="py-24 bg-white relative z-10 pl-40 pr-40">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-serif font-extrabold text-deep-navy mb-4">
                         Why Choose ElderKey?

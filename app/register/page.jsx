@@ -9,6 +9,7 @@ import DottedBg from "@/components/custom/dottedBg";
 import FontIcon from "@/components/icons/FontIcon";
 import { useFriction } from "@/context/FrictionContext";
 import RescueBubble from "@/components/custom/RescueBubble";
+import { useUser } from "@/context/UserContext";
 
 // --- SUB-COMPONENTS ---
 
@@ -79,6 +80,7 @@ const StandardProfileForm = ({
     setAgreed,
     isProfileValid,
     onNext,
+    onOpenTerms,
 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -175,7 +177,11 @@ const StandardProfileForm = ({
                 setIdPreview={setIdPreview}
             />
 
-            <TermsCheckbox agreed={agreed} setAgreed={setAgreed} />
+            <TermsCheckbox
+                agreed={agreed}
+                setAgreed={setAgreed}
+                onOpenTerms={onOpenTerms}
+            />
 
             <Button
                 onClick={onNext}
@@ -196,9 +202,9 @@ const WizardProfileForm = ({
     idPreview,
     setIdPreview,
     agreed,
-    setAgreed,
     isProfileValid,
     onNext,
+    onOpenTerms,
 }) => {
     const [wizardStep, setWizardStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
@@ -353,7 +359,11 @@ const WizardProfileForm = ({
                             setIdPreview={setIdPreview}
                             small
                         />
-                        <TermsCheckbox agreed={agreed} setAgreed={setAgreed} />
+                        <TermsCheckbox
+                            agreed={agreed}
+                            setAgreed={setAgreed}
+                            onOpenTerms={onOpenTerms}
+                        />
                     </>
                 )}
             </div>
@@ -516,6 +526,7 @@ const PlanSelectionStep = ({
 
 const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
     const router = useRouter(); // Import useRouter at the top of the file
+    const { refreshUser } = useUser();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleConfirm = async () => {
@@ -529,6 +540,7 @@ const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
 
             if (res.ok) {
                 // If registration successful, router refresh then redirect to dashboard
+                await refreshUser();
                 router.refresh();
                 router.push('/dashboard');
             } else {
@@ -619,6 +631,58 @@ const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
         </div>
     );
 };
+
+const TermsModal = ({ onClose }) => (
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+        <Card className="w-full max-w-2xl bg-white border-none rounded-[2rem] shadow-2xl p-8 animate-in zoom-in duration-300 relative h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="font-['Merriweather'] text-2xl font-bold text-[#023047]">
+                    Terms & Agreements
+                </h2>
+                <button
+                    onClick={onClose}
+                    className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                >
+                    <FontIcon icon="fa-xmark" />
+                </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-4 space-y-4 text-justify text-[#52796F] text-sm leading-relaxed custom-scrollbar">
+                <p>Welcome to ElderKey. By accessing or using our platform, you agree to be bound by these Terms and Conditions.</p>
+
+                <h3 className="font-bold text-[#023047]">1. Service Description</h3>
+                <p>ElderKey provides a digital concierge and benefits platform for senior citizens. Our services include digital ID management, partner directory access, and membership benefits.</p>
+
+                <h3 className="font-bold text-[#023047]">2. User Responsibilities</h3>
+                <p>You agree to provide accurate and complete information during registration. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+
+                <h3 className="font-bold text-[#023047]">3. Privacy Policy</h3>
+                <p>Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your personal information. By using our service, you agree to our data practices.</p>
+
+                <h3 className="font-bold text-[#023047]">4. Membership Plans</h3>
+                <p>Membership benefits vary by plan (Bronze, Silver, Gold). We reserve the right to modify plan features or pricing with reasonable notice.</p>
+
+                <h3 className="font-bold text-[#023047]">5. Acceptable Use</h3>
+                <p>You agree not to misuse our platform, including but not limited to attempted unauthorized access, data scraping, or using the service for illegal purposes.</p>
+
+                <h3 className="font-bold text-[#023047]">6. Limitation of Liability</h3>
+                <p>ElderKey is not liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of the service.</p>
+
+                <h3 className="font-bold text-[#023047]">7. Changes to Terms</h3>
+                <p>We may update these terms from time to time. Continued use of the platform after changes constitutes acceptance of the new terms.</p>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-gray-100 flex justify-end">
+                <Button
+                    onClick={onClose}
+                    className="px-8 h-12 bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] rounded-xl font-bold shadow-lg cursor-pointer"
+                >
+                    I Understand
+                </Button>
+            </div>
+        </Card>
+    </div>
+);
 
 // --- HELPERS ---
 
@@ -748,7 +812,7 @@ const IDUploadSection = ({
     </div>
 );
 
-const TermsCheckbox = ({ agreed, setAgreed }) => (
+const TermsCheckbox = ({ agreed, setAgreed, onOpenTerms }) => (
     <div className="flex items-center gap-3 pt-4">
         <input
             type="checkbox"
@@ -762,7 +826,13 @@ const TermsCheckbox = ({ agreed, setAgreed }) => (
             className="text-sm text-gray-500 cursor-pointer font-medium leading-tight"
         >
             I acknowledge and expressly agree to the{" "}
-            <span className="text-blue-600 font-bold hover:underline">
+            <span
+                onClick={(e) => {
+                    e.preventDefault();
+                    onOpenTerms();
+                }}
+                className="text-blue-600 font-bold hover:underline cursor-pointer"
+            >
                 Terms & Agreements
             </span>{" "}
             provided by ElderKey.
@@ -776,6 +846,7 @@ export default function RegisterPage() {
     const [step, setStep] = useState(1);
     const [selectedPlan, setSelectedPlan] = useState("Silver");
     const [showModal, setShowModal] = useState(false);
+    const [showTermsModal, setShowTermsModal] = useState(false);
     const [agreed, setAgreed] = useState(false);
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [isWizardMode, setIsWizardMode] = useState(false);
@@ -893,6 +964,7 @@ export default function RegisterPage() {
                                     setAgreed={setAgreed}
                                     isProfileValid={isProfileValid}
                                     onNext={() => setStep(2)}
+                                    onOpenTerms={() => setShowTermsModal(true)}
                                 />
                             ) : (
                                 <StandardProfileForm
@@ -906,6 +978,7 @@ export default function RegisterPage() {
                                     setAgreed={setAgreed}
                                     isProfileValid={isProfileValid}
                                     onNext={() => setStep(2)}
+                                    onOpenTerms={() => setShowTermsModal(true)}
                                 />
                             ))}
 
@@ -956,6 +1029,10 @@ export default function RegisterPage() {
                     selectedPlan={selectedPlan}
                     plans={plans}
                 />
+            )}
+
+            {showTermsModal && (
+                <TermsModal onClose={() => setShowTermsModal(false)} />
             )}
         </main>
     );

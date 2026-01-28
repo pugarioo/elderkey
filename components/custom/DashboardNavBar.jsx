@@ -83,7 +83,7 @@ export default function DashboardNavBar() {
                     </Link>
                     <button
                         onClick={handleLogout}
-                        className="w-10 h-10 rounded-full bg-red-50 text-red-300 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-all"
+                        className="w-10 h-10 rounded-full bg-red-50 text-red-300 hover:bg-red-100 hover:text-red-500 flex items-center justify-center cursor-pointer transition-all"
                         title="Log Out"
                     >
                         <FontIcon icon="fa-solid fa-arrow-right-from-bracket" />

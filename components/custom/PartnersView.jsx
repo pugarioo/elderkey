@@ -150,7 +150,7 @@ export default function PartnersView({ partners }) {
                                         <button
                                             key={cat}
                                             onClick={() => setSelectedCategory(cat)}
-                                            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex justify-between items-center ${isSelected
+                                            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex justify-between cursor-pointer items-center ${isSelected
                                                 ? 'bg-[#FFB703] text-[#023047] shadow-sm'
                                                 : 'text-slate-500 hover:bg-slate-50 hover:text-[#023047]'
                                                 }`}

@@ -242,7 +242,7 @@ export default function SettingsPayment() {
                 {/* Add New Button */}
                 <button
                     onClick={() => setShowModal(true)}
-                    className="w-full py-5 mt-6 rounded-2xl border-2 bg-white border-dashed border-gray-300 text-gray-400 font-bold hover:border-primary hover:text-primary hover:bg-orange  transition-all flex items-center justify-center gap-3 text-lg"
+                    className="w-full py-5 mt-6 rounded-2xl border-2 bg-white border-dashed border-gray-300 text-gray-400 font-bold hover:border-primary hover:text-primary hover:bg-orange  transition-all flex items-center justify-center gap-3 text-lg cursor-pointer"
                 >
                     <FontIcon icon="fa-solid fa-plus-circle" /> Add Payment Method
                 </button>

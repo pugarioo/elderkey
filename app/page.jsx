@@ -47,7 +47,7 @@ export default function Home() {
                                     icon="fa-solid fa-play"
                                     style="text-primary"
                                 />
-                                <Link href="/">See How It Works</Link>
+                                <Link href="/tutorials">See How It Works</Link>
                             </Button>
                         </div>
                         <div className="flex justify-start items-center gap-1 font-bold">

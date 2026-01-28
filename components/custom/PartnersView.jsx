@@ -192,9 +192,9 @@ export default function PartnersView({ partners }) {
                                                         <h3 className="font-serif text-2xl font-bold text-[#023047] mb-1">{partner.name}</h3>
                                                         <p className="text-[#52796F] font-bold uppercase tracking-wider text-sm">{partner.field}</p>
                                                     </div>
-                                                    <Link href={`/dashboard/partners/${partner.id}`} className="bg-[#023047] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#FB8500] transition-colors">
+                                                    <p className="bg-[#023047] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#FB8500] transition-colors">
                                                         View
-                                                    </Link>
+                                                    </p>
                                                 </div>
                                             </Link>
                                         ))}

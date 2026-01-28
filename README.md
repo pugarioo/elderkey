@@ -50,5 +50,5 @@ Family members can trust that their loved ones are carrying a secure, verified c
 ---
 
 <div align="center">
-  <p><sub>© 2024 ElderKey Platforms Inc. All Rights Reserved.</sub></p>
+  <p><sub>© 2026 ElderKey Platforms Inc. All Rights Reserved.</sub></p>
 </div>

@@ -9,6 +9,7 @@ import DottedBg from "@/components/custom/dottedBg";
 import FontIcon from "@/components/icons/FontIcon";
 import { useFriction } from "@/context/FrictionContext";
 import RescueBubble from "@/components/custom/RescueBubble";
+import { useUser } from "@/context/UserContext";
 
 // --- SUB-COMPONENTS ---
 
@@ -525,6 +526,7 @@ const PlanSelectionStep = ({
 
 const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
     const router = useRouter(); // Import useRouter at the top of the file
+    const { refreshUser } = useUser();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleConfirm = async () => {
@@ -538,6 +540,7 @@ const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
 
             if (res.ok) {
                 // If registration successful, router refresh then redirect to dashboard
+                await refreshUser();
                 router.refresh();
                 router.push('/dashboard');
             } else {

@@ -8,8 +8,11 @@ import DottedBG from "@/components/custom/dottedBg";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { useUser } from "@/context/UserContext";
+
 export default function LoginPage() {
     const router = useRouter();
+    const { refreshUser } = useUser();
     const [formData, setFormData] = useState({
         identifier: '',
         password: ''
@@ -35,6 +38,7 @@ export default function LoginPage() {
             });
 
             if (res.ok) {
+                await refreshUser();
                 router.refresh(); // Refresh to update server components/cookies
                 router.push('/dashboard'); // Redirect to dashboard
             } else {

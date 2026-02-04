@@ -5,6 +5,7 @@ import "./globals.css";
 import { FrictionProvider } from "@/context/FrictionContext";
 import { UserProvider } from "@/context/UserContext";
 import Logo from "@/components/icons/logo";
+import { Toaster } from 'sonner';
 
 // const geistSans = Geist({
 //     variable: "--font-geist-sans",
@@ -17,11 +18,11 @@ import Logo from "@/components/icons/logo";
 // });
 
 export const metadata = {
-  title: "ElderKey",
-  description: "Adaptive UI for aging populations",
-  icons: {
-    icon: "/icon.svg", // This looks inside your 'public' folder
-  },
+    title: "ElderKey",
+    description: "Adaptive UI for aging populations",
+    icons: {
+        icon: "/icon.svg", // This looks inside your 'public' folder
+    },
 };
 
 // Variable font (no weight needed)
@@ -47,7 +48,7 @@ export default function RootLayout({ children }) {
                     <UserProvider>
                         <NavBar />
                         {children}
-
+                        <Toaster position="top-center" richColors />
                         <Footer />
                     </UserProvider>
                 </FrictionProvider>

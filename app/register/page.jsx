@@ -1,7 +1,11 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "@/lib/schemas";
+import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,101 +74,65 @@ const StepConnector = ({ step, targetStep }) => (
 );
 
 const StandardProfileForm = ({
-    formData,
-    handleInputChange,
+    register,
+    errors,
     fileInputRef,
     handleFileChange,
     idPreview,
     setIdPreview,
-    agreed,
-    setAgreed,
-    isProfileValid,
+    watch,
+    setValue,
+    isValid,
     onNext,
     onOpenTerms,
 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const agreed = watch('termsAccepted');
 
     return (
-        <form className="space-y-6 animate-in fade-in duration-500">
+        <form className="space-y-6 animate-in fade-in duration-500" onSubmit={(e) => { e.preventDefault(); onNext(); }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {[
-                    {
-                        label: "FIRST NAME",
-                        name: "firstName",
-                        icon: "fa-user",
-                        placeholder: "e.g. Martha",
-                    },
-                    {
-                        label: "LAST NAME",
-                        name: "lastName",
-                        icon: "fa-user",
-                        placeholder: "e.g. Stewart",
-                    },
-                    {
-                        label: "BIRTH DATE",
-                        name: "birthDate",
-                        icon: "fa-calendar",
-                        type: "date",
-                    },
-                    {
-                        label: "MOBILE NO.",
-                        name: "mobileNo",
-                        icon: "fa-phone",
-                        placeholder: "e.g. 97599984111",
-                    },
-                    {
-                        label: "EMAIL ADDRESS",
-                        name: "email",
-                        icon: "fa-envelope",
-                        placeholder: "e.g. martha.stewart@test.com",
-                    },
-                    {
-                        label: "USERNAME",
-                        name: "username",
-                        icon: "fa-at",
-                        placeholder: "e.g. martha_s",
-                    },
+                    { label: "FIRST NAME", name: "firstName", icon: "fa-user", placeholder: "e.g. Martha" },
+                    { label: "LAST NAME", name: "lastName", icon: "fa-user", placeholder: "e.g. Stewart" },
+                    { label: "BIRTH DATE", name: "birthDate", icon: "fa-calendar", type: "date" },
+                    { label: "MOBILE NO.", name: "mobileNo", icon: "fa-phone", placeholder: "e.g. 97599984111" },
+                    { label: "EMAIL ADDRESS", name: "email", icon: "fa-envelope", placeholder: "e.g. martha.stewart@test.com" },
+                    { label: "USERNAME", name: "username", icon: "fa-at", placeholder: "e.g. martha_s" },
                 ].map((field) => (
                     <div key={field.name} className="space-y-2">
                         <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
-                            {field.label}{" "}
-                            {field.name !== "email" && (
-                                <span className="text-red-500 font-bold">
-                                    *
-                                </span>
-                            )}
+                            {field.label} {field.name !== "email" && <span className="text-red-500 font-bold">*</span>}
                         </label>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                                 <FontIcon icon={field.icon} />
                             </span>
                             <Input
-                                name={field.name}
                                 type={field.type || "text"}
-                                value={formData[field.name]}
-                                onChange={handleInputChange}
-                                className="pl-12 border-gray-200 rounded-xl h-14"
+                                {...register(field.name)}
+                                className={`pl-12 border-gray-200 rounded-xl h-14 ${errors[field.name] ? "border-red-500" : ""}`}
                                 placeholder={field.placeholder}
                             />
                         </div>
+                        {errors[field.name] && <p className="text-red-500 text-xs font-bold">{errors[field.name].message}</p>}
                     </div>
                 ))}
 
-                {/* Passwords */}
                 <PasswordField
                     label="PASSWORD"
                     name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
+                    register={register}
+                    error={errors.password}
                     show={showPassword}
                     toggle={() => setShowPassword(!showPassword)}
                 />
                 <PasswordField
                     label="CONFIRM PASSWORD"
                     name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
+                    register={register}
+                    error={errors.confirmPassword}
                     show={showConfirmPassword}
                     toggle={() => setShowConfirmPassword(!showConfirmPassword)}
                 />
@@ -178,15 +146,15 @@ const StandardProfileForm = ({
             />
 
             <TermsCheckbox
-                agreed={agreed}
-                setAgreed={setAgreed}
+                register={register}
                 onOpenTerms={onOpenTerms}
+                error={errors.termsAccepted}
             />
 
             <Button
-                onClick={onNext}
-                disabled={!isProfileValid}
-                className={`w-full h-16 rounded-2xl font-bold text-xl transition-all cursor-pointer ${isProfileValid ? "bg-[#FFB703] hover:bg-[#FB8500] text-white shadow-lg shadow-[#FFB703]/30" : "bg-gray-200 text-gray-400"}`}
+                type="submit"
+                disabled={!isValid || !idPreview}
+                className={`w-full h-16 rounded-2xl font-bold text-xl transition-all cursor-pointer ${isValid && idPreview ? "bg-[#FFB703] hover:bg-[#FB8500] text-white shadow-lg shadow-[#FFB703]/30" : "bg-gray-200 text-gray-400"}`}
             >
                 Continue
             </Button>
@@ -195,46 +163,45 @@ const StandardProfileForm = ({
 };
 
 const WizardProfileForm = ({
-    formData,
-    handleInputChange,
+    register,
+    errors,
+    trigger,
+    watch,
+    setValue,
     fileInputRef,
     handleFileChange,
     idPreview,
     setIdPreview,
-    agreed,
-    isProfileValid,
     onNext,
     onOpenTerms,
 }) => {
     const [wizardStep, setWizardStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const agreed = watch('termsAccepted');
+    const isValid = watch('isValid'); // Not really working like this, need to rely on trigger
 
-    const nextStep = () => {
-        if (wizardStep < 6) setWizardStep((prev) => prev + 1);
-        else if (isProfileValid) onNext();
+    const nextStep = async () => {
+        let fieldsToValidate = [];
+        switch (wizardStep) {
+            case 1: fieldsToValidate = ['firstName', 'lastName']; break;
+            case 2: fieldsToValidate = ['email']; break;
+            case 3: fieldsToValidate = ['birthDate']; break;
+            case 4: fieldsToValidate = ['mobileNo']; break;
+            case 5: fieldsToValidate = ['password', 'confirmPassword']; break;
+            case 6: fieldsToValidate = ['username', 'termsAccepted']; break;
+        }
+
+        const isStepValid = await trigger(fieldsToValidate);
+        if (isStepValid) {
+            if (wizardStep < 6) setWizardStep((prev) => prev + 1);
+            else if (idPreview && agreed) onNext();
+            else if (!idPreview) toast.error("Please upload your ID");
+            else if (!agreed) toast.error("Please accept the terms");
+        }
     };
 
     const prevStep = () => setWizardStep((prev) => prev - 1);
-
-    const isStepValid = () => {
-        switch (wizardStep) {
-            case 1:
-                return formData.firstName && formData.lastName;
-            case 2:
-                return formData.email;
-            case 3:
-                return formData.birthDate;
-            case 4:
-                return formData.mobileNo;
-            case 5:
-                return formData.password && formData.confirmPassword;
-            case 6:
-                return formData.username && idPreview && agreed;
-            default:
-                return false;
-        }
-    };
 
     const titles = [
         "What is your name?",
@@ -249,8 +216,7 @@ const WizardProfileForm = ({
         <div className="flex flex-col h-full animate-in fade-in zoom-in duration-500">
             <div className="text-center mb-8">
                 <h3 className="text-[#023047] font-serif font-bold text-2xl mb-1">
-                    STEP <span className="text-[#FFB703]">{wizardStep}</span> OF
-                    6
+                    STEP <span className="text-[#FFB703]">{wizardStep}</span> OF 6
                 </h3>
                 <h2 className="text-[#52796F] text-xl md:text-2xl">
                     {titles[wizardStep - 1]}
@@ -264,8 +230,8 @@ const WizardProfileForm = ({
                             label="FIRST NAME"
                             name="firstName"
                             icon="fa-user"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
+                            register={register}
+                            error={errors.firstName}
                             placeholder="e.g. Martha"
                             autoFocus
                         />
@@ -273,8 +239,8 @@ const WizardProfileForm = ({
                             label="LAST NAME"
                             name="lastName"
                             icon="fa-user"
-                            value={formData.lastName}
-                            onChange={handleInputChange}
+                            register={register}
+                            error={errors.lastName}
                             placeholder="e.g. Stewart"
                         />
                     </>
@@ -284,8 +250,8 @@ const WizardProfileForm = ({
                         label="EMAIL ADDRESS"
                         name="email"
                         icon="fa-envelope"
-                        value={formData.email}
-                        onChange={handleInputChange}
+                        register={register}
+                        error={errors.email}
                         placeholder="e.g. email@test.com"
                         autoFocus
                     />
@@ -296,13 +262,12 @@ const WizardProfileForm = ({
                             BIRTH DATE
                         </label>
                         <Input
-                            name="birthDate"
                             type="date"
-                            value={formData.birthDate}
-                            onChange={handleInputChange}
-                            className="pl-4 border-gray-200 rounded-xl h-16 text-lg w-full"
+                            {...register('birthDate')}
+                            className={`pl-4 border-gray-200 rounded-xl h-16 text-lg w-full ${errors.birthDate ? "border-red-500" : ""}`}
                             autoFocus
                         />
+                        {errors.birthDate && <p className="text-red-500 text-xs font-bold">{errors.birthDate.message}</p>}
                     </div>
                 )}
                 {wizardStep === 4 && (
@@ -310,8 +275,8 @@ const WizardProfileForm = ({
                         label="MOBILE NO."
                         name="mobileNo"
                         icon="fa-phone"
-                        value={formData.mobileNo}
-                        onChange={handleInputChange}
+                        register={register}
+                        error={errors.mobileNo}
                         placeholder="e.g. 975..."
                         autoFocus
                     />
@@ -321,8 +286,8 @@ const WizardProfileForm = ({
                         <PasswordField
                             label="PASSWORD"
                             name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
+                            register={register}
+                            error={errors.password}
                             show={showPassword}
                             toggle={() => setShowPassword(!showPassword)}
                             size="lg"
@@ -331,12 +296,10 @@ const WizardProfileForm = ({
                         <PasswordField
                             label="CONFIRM PASSWORD"
                             name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
+                            register={register}
+                            error={errors.confirmPassword}
                             show={showConfirmPassword}
-                            toggle={() =>
-                                setShowConfirmPassword(!showConfirmPassword)
-                            }
+                            toggle={() => setShowConfirmPassword(!showConfirmPassword)}
                             size="lg"
                         />
                     </>
@@ -347,8 +310,8 @@ const WizardProfileForm = ({
                             label="USERNAME"
                             name="username"
                             icon="fa-at"
-                            value={formData.username}
-                            onChange={handleInputChange}
+                            register={register}
+                            error={errors.username}
                             placeholder="e.g. martha_s"
                             autoFocus
                         />
@@ -360,9 +323,9 @@ const WizardProfileForm = ({
                             small
                         />
                         <TermsCheckbox
-                            agreed={agreed}
-                            setAgreed={setAgreed}
+                            register={register}
                             onOpenTerms={onOpenTerms}
+                            error={errors.termsAccepted}
                         />
                     </>
                 )}
@@ -371,27 +334,18 @@ const WizardProfileForm = ({
             <div className="flex flex-col items-center space-y-4 pt-6">
                 <Button
                     onClick={nextStep}
-                    disabled={!isStepValid()}
                     className="w-full max-w-sm h-16 bg-[#FFB703] hover:bg-[#FB8500] text-white rounded-2xl font-bold text-xl shadow-lg shadow-[#FFB703]/30 cursor-pointer flex items-center justify-center gap-2"
                 >
-                    {wizardStep === 6 ? "Finish & Verify" : "Next"}{" "}
-                    <FontIcon icon="fa-chevron-right" />
+                    {wizardStep === 6 ? "Finish & Verify" : "Next"} <FontIcon icon="fa-chevron-right" />
                 </Button>
                 {wizardStep > 1 && (
-                    <button
-                        onClick={prevStep}
-                        className="text-[#023047] font-bold text-sm hover:underline flex items-center gap-2"
-                    >
+                    <button onClick={prevStep} className="text-[#023047] font-bold text-sm hover:underline flex items-center gap-2">
                         <FontIcon icon="fa-arrow-left" /> Back to Previous Step
                     </button>
                 )}
                 <div className="text-center mt-2">
-                    <span className="text-gray-400">
-                        Already have an account?{" "}
-                    </span>
-                    <span className="text-[#FFB703] font-bold cursor-pointer hover:underline">
-                        Log in.
-                    </span>
+                    <span className="text-gray-400">Already have an account? </span>
+                    <span className="text-[#FFB703] font-bold cursor-pointer hover:underline">Log in.</span>
                 </div>
             </div>
         </div>
@@ -524,37 +478,7 @@ const PlanSelectionStep = ({
     </div>
 );
 
-const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
-    const router = useRouter(); // Import useRouter at the top of the file
-    const { refreshUser } = useUser();
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleConfirm = async () => {
-        setIsLoading(true);
-        try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, plan: selectedPlan }),
-            });
-
-            if (res.ok) {
-                // If registration successful, router refresh then redirect to dashboard
-                await refreshUser();
-                router.refresh();
-                router.push('/dashboard');
-            } else {
-                const errorData = await res.json();
-                alert(errorData.error || 'Registration failed');
-            }
-        } catch (error) {
-            console.error(error);
-            alert('An error occurred. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+const ConfirmationModal = ({ onClose, onConfirm, formData, selectedPlan, plans, isLoading }) => {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
             <Card className="w-full max-w-lg bg-[#FAF9F6] border-none rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-300 relative">
@@ -574,20 +498,15 @@ const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
                         <div className="grid grid-cols-2 gap-y-3 text-sm">
                             <span className="text-gray-500 font-medium">Name:</span>
                             <span className="text-[#023047] font-bold text-right">
-                                {formData.firstName}{" "}
-                                {formData.lastName || "Stewart"}
+                                {formData.firstName} {formData.lastName}
                             </span>
-                            <span className="text-gray-500 font-medium">
-                                Email:
-                            </span>
+                            <span className="text-gray-500 font-medium">Email:</span>
                             <span className="text-[#023047] font-bold text-right truncate pl-4">
-                                {formData.email || "martha.stewart@test.com"}
+                                {formData.email}
                             </span>
-                            <span className="text-gray-500 font-medium">
-                                Mobile:
-                            </span>
+                            <span className="text-gray-500 font-medium">Mobile:</span>
                             <span className="text-[#023047] font-bold text-right">
-                                {formData.mobileNo || "097599984111"}
+                                {formData.mobileNo}
                             </span>
                         </div>
                     </div>
@@ -601,29 +520,18 @@ const ConfirmationModal = ({ onClose, formData, selectedPlan, plans }) => {
                             </span>
                         </div>
                         <div className="flex flex-col items-end">
-                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                                Pricing
-                            </span>
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Pricing</span>
                             <span className="text-xl font-bold text-[#FB8500]">
-                                ${plans.find((p) => p.name === selectedPlan)?.price}
-                                /mo
+                                ${plans.find((p) => p.name === selectedPlan)?.price}/mo
                             </span>
                         </div>
                     </div>
                 </div>
                 <div className="flex gap-4 mt-10">
-                    <Button
-                        onClick={onClose}
-                        className="flex-1 h-14 bg-white border border-gray-200 text-gray-500 rounded-2xl font-bold transition-all cursor-pointer"
-                        disabled={isLoading}
-                    >
+                    <Button onClick={onClose} className="flex-1 h-14 bg-white border border-gray-200 text-gray-500 rounded-2xl font-bold transition-all cursor-pointer" disabled={isLoading}>
                         Back
                     </Button>
-                    <Button
-                        onClick={handleConfirm}
-                        disabled={isLoading}
-                        className="flex-[2] h-14 bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] rounded-2xl font-black text-lg shadow-lg cursor-pointer"
-                    >
+                    <Button onClick={onConfirm} disabled={isLoading} className="flex-[2] h-14 bg-[#FFB703] hover:bg-[#FB8500] text-[#023047] rounded-2xl font-black text-lg shadow-lg cursor-pointer">
                         {isLoading ? 'Creating Account...' : 'Confirm & Join'}
                     </Button>
                 </div>
@@ -686,15 +594,7 @@ const TermsModal = ({ onClose }) => (
 
 // --- HELPERS ---
 
-const InputField = ({
-    label,
-    name,
-    icon,
-    value,
-    onChange,
-    placeholder,
-    autoFocus,
-}) => (
+const InputField = ({ label, name, icon, register, error, placeholder, autoFocus }) => (
     <div className="space-y-2">
         <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
             {label} <span className="text-red-500">*</span>
@@ -704,27 +604,17 @@ const InputField = ({
                 <FontIcon icon={icon} />
             </span>
             <Input
-                name={name}
-                value={value}
-                onChange={onChange}
-                className="pl-12 border-gray-200 rounded-xl h-16 text-lg"
+                {...register(name)}
+                className={`pl-12 border-gray-200 rounded-xl h-16 text-lg ${error ? "border-red-500" : ""}`}
                 placeholder={placeholder}
                 autoFocus={autoFocus}
             />
         </div>
+        {error && <p className="text-red-500 text-xs font-bold">{error.message}</p>}
     </div>
 );
 
-const PasswordField = ({
-    label,
-    name,
-    value,
-    onChange,
-    show,
-    toggle,
-    size = "md",
-    autoFocus,
-}) => (
+const PasswordField = ({ label, name, register, error, show, toggle, size = "md", autoFocus }) => (
     <div className="space-y-2 relative">
         <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
             {label} <span className="text-red-500 font-bold">*</span>
@@ -734,18 +624,11 @@ const PasswordField = ({
                 <FontIcon icon="fa-lock" />
             </span>
             <Input
-                name={name}
-                onChange={onChange}
-                value={value}
                 type={show ? "text" : "password"}
-                className={`px-12 border-gray-200 rounded-xl ${size === "lg" ? "h-16 text-lg" : "h-14"}`}
+                {...register(name)}
+                className={`px-12 border-gray-200 rounded-xl ${size === "lg" ? "h-16 text-lg" : "h-14"} ${error ? "border-red-500" : ""}`}
                 autoFocus={autoFocus}
             />
-            {!value && (
-                <span className="absolute left-12 top-1/2 -translate-y-1/2 text-gray-400 text-xl tracking-[0.2em] pointer-events-none">
-                    ••••••••••••
-                </span>
-            )}
             <span
                 onClick={toggle}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
@@ -753,6 +636,7 @@ const PasswordField = ({
                 <FontIcon icon={show ? "fa-eye-slash" : "fa-eye"} />
             </span>
         </div>
+        {error && <p className="text-red-500 text-xs font-bold">{error.message}</p>}
     </div>
 );
 
@@ -812,59 +696,72 @@ const IDUploadSection = ({
     </div>
 );
 
-const TermsCheckbox = ({ agreed, setAgreed, onOpenTerms }) => (
-    <div className="flex items-center gap-3 pt-4">
-        <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="w-5 h-5 rounded border-gray-300 text-[#FB8500] cursor-pointer"
-            id="terms"
-        />
-        <label
-            htmlFor="terms"
-            className="text-sm text-gray-500 cursor-pointer font-medium leading-tight"
-        >
-            I acknowledge and expressly agree to the{" "}
-            <span
-                onClick={(e) => {
-                    e.preventDefault();
-                    onOpenTerms();
-                }}
-                className="text-blue-600 font-bold hover:underline cursor-pointer"
+const TermsCheckbox = ({ register, onOpenTerms, error }) => (
+    <div className="flex flex-col gap-1 pt-4">
+        <div className="flex items-center gap-3">
+            <input
+                type="checkbox"
+                {...register("termsAccepted")}
+                className="w-5 h-5 rounded border-gray-300 text-[#FB8500] cursor-pointer"
+                id="terms"
+            />
+            <label
+                htmlFor="terms"
+                className="text-sm text-gray-500 cursor-pointer font-medium leading-tight"
             >
-                Terms & Agreements
-            </span>{" "}
-            provided by ElderKey.
-        </label>
+                I acknowledge and expressly agree to the{" "}
+                <span
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onOpenTerms();
+                    }}
+                    className="text-blue-600 font-bold hover:underline cursor-pointer"
+                >
+                    Terms & Agreements
+                </span>{" "}
+                provided by ElderKey.
+            </label>
+        </div>
+        {error && <p className="text-red-500 text-xs font-bold ml-8">{error.message}</p>}
     </div>
 );
 
 // --- MAIN COMPONENT ---
 
 export default function RegisterPage() {
+    const { refreshUser } = useUser();
+    const router = useRouter();
     const [step, setStep] = useState(1);
     const [selectedPlan, setSelectedPlan] = useState("Silver");
     const [showModal, setShowModal] = useState(false);
     const [showTermsModal, setShowTermsModal] = useState(false);
-    const [agreed, setAgreed] = useState(false);
+    // const [agreed, setAgreed] = useState(false); // Managed by RHF now
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [isWizardMode, setIsWizardMode] = useState(false);
     const [idPreview, setIdPreview] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const { stressScore } = useFriction();
 
     const fileInputRef = useRef(null);
 
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        birthDate: "",
-        mobileNo: "",
-        username: "",
-        password: "",
-        confirmPassword: "",
-        email: "",
+    const { register, trigger, watch, setValue, getValues, formState: { errors, isValid } } = useForm({
+        resolver: zodResolver(registerSchema),
+        mode: "onChange",
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+            birthDate: "",
+            mobileNo: "",
+            username: "",
+            password: "",
+            confirmPassword: "",
+            email: "",
+            termsAccepted: false
+        }
     });
+
+    // Watch fields for legacy components if needed, or better, pass passing needed values
+    const formData = watch(); // Retrieve all values to pass to VerificationStep and PlanSelection (which are display only or non-form)
 
     const plans = [
         {
@@ -898,21 +795,6 @@ export default function RegisterPage() {
         },
     ];
 
-    const isProfileValid =
-        formData.firstName &&
-        formData.lastName &&
-        formData.birthDate &&
-        formData.mobileNo &&
-        formData.username &&
-        formData.password &&
-        formData.confirmPassword &&
-        agreed;
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
@@ -930,6 +812,35 @@ export default function RegisterPage() {
         setOtp(newOtp);
         if (element.value !== "" && element.nextSibling)
             element.nextSibling.focus();
+    };
+
+    const handleConfirmRegistration = async () => {
+        setIsLoading(true);
+        const data = getValues();
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...data, plan: selectedPlan, seniorId: idPreview }),
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                await refreshUser();
+                toast.success('Account created successfully!');
+                router.refresh();
+                router.push('/dashboard');
+            } else {
+                toast.error(result.error || 'Registration failed');
+                setShowModal(false);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -954,29 +865,29 @@ export default function RegisterPage() {
                         {step === 1 &&
                             (isWizardMode ? (
                                 <WizardProfileForm
-                                    formData={formData}
-                                    handleInputChange={handleInputChange}
+                                    register={register}
+                                    errors={errors}
+                                    trigger={trigger}
+                                    watch={watch}
+                                    setValue={setValue}
                                     fileInputRef={fileInputRef}
                                     handleFileChange={handleFileChange}
                                     idPreview={idPreview}
                                     setIdPreview={setIdPreview}
-                                    agreed={agreed}
-                                    setAgreed={setAgreed}
-                                    isProfileValid={isProfileValid}
                                     onNext={() => setStep(2)}
                                     onOpenTerms={() => setShowTermsModal(true)}
                                 />
                             ) : (
                                 <StandardProfileForm
-                                    formData={formData}
-                                    handleInputChange={handleInputChange}
+                                    register={register}
+                                    errors={errors}
+                                    watch={watch}
+                                    setValue={setValue}
+                                    isValid={isValid}
                                     fileInputRef={fileInputRef}
                                     handleFileChange={handleFileChange}
                                     idPreview={idPreview}
                                     setIdPreview={setIdPreview}
-                                    agreed={agreed}
-                                    setAgreed={setAgreed}
-                                    isProfileValid={isProfileValid}
                                     onNext={() => setStep(2)}
                                     onOpenTerms={() => setShowTermsModal(true)}
                                 />
@@ -1025,9 +936,11 @@ export default function RegisterPage() {
             {showModal && (
                 <ConfirmationModal
                     onClose={() => setShowModal(false)}
-                    formData={{ ...formData, seniorId: idPreview, termsAccepted: agreed }}
+                    onConfirm={handleConfirmRegistration}
+                    formData={formData}
                     selectedPlan={selectedPlan}
                     plans={plans}
+                    isLoading={isLoading}
                 />
             )}
 

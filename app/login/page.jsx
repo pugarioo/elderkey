@@ -1,6 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/lib/schemas";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DigitalIdCard from "@/components/custom/DigitalIdCard";
@@ -13,43 +17,35 @@ import { useUser } from "@/context/UserContext";
 export default function LoginPage() {
     const router = useRouter();
     const { refreshUser } = useUser();
-    const [formData, setFormData] = useState({
-        identifier: '',
-        password: ''
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            identifier: '',
+            password: ''
+        }
     });
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setError('');
-
+    const onSubmit = async (data) => {
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(data),
             });
+
+            const result = await res.json();
 
             if (res.ok) {
                 await refreshUser();
-                router.refresh(); // Refresh to update server components/cookies
-                router.push('/dashboard'); // Redirect to dashboard
+                toast.success('Login successful! Redirecting...');
+                router.refresh();
+                router.push('/dashboard');
             } else {
-                const data = await res.json();
-                setError(data.error || 'Login failed');
+                toast.error(result.error || 'Login failed');
             }
         } catch (err) {
             console.error(err);
-            setError('An error occurred. Please try again.');
-        } finally {
-            setIsLoading(false);
+            toast.error('An error occurred. Please try again.');
         }
     };
 
@@ -64,41 +60,35 @@ export default function LoginPage() {
                         <p className="text-gray-500">Enter your details to access your account.</p>
                     </div>
 
-                    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm font-medium">
-                                {error}
-                            </div>
-                        )}
+                    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
                         <div className="space-y-2">
                             <Input
-                                type="text"
-                                name="identifier"
-                                value={formData.identifier}
-                                onChange={handleInputChange}
+                                {...register('identifier')}
                                 placeholder="Username, Email, or Mobile Number"
-                                className="h-12 bg-white"
-                                required
+                                className={`h-12 bg-white ${errors.identifier ? 'border-red-500' : ''}`}
                             />
+                            {errors.identifier && (
+                                <p className="text-red-500 text-sm mt-1">{errors.identifier.message}</p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Input
                                 type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
+                                {...register('password')}
                                 placeholder="Password"
-                                className="h-12 bg-white"
-                                required
+                                className={`h-12 bg-white ${errors.password ? 'border-red-500' : ''}`}
                             />
+                            {errors.password && (
+                                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                            )}
                         </div>
 
                         <Button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                             className="w-full h-12 text-lg font-bold bg-primary cursor-pointer hover:bg-primary/90 mt-2"
                         >
-                            {isLoading ? 'Logging In...' : 'Log In'}
+                            {isSubmitting ? 'Logging In...' : 'Log In'}
                         </Button>
 
                         <div className="text-center mt-2">

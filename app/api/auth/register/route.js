@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { createUser, getUserByEmail } from '@/lib/db';
 import { cookies } from 'next/headers';
+import { registerSchema } from '@/lib/schemas';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'secret-key-change-me'; // In production, use environment variable
 const key = new TextEncoder().encode(SECRET_KEY);
@@ -10,7 +11,14 @@ const key = new TextEncoder().encode(SECRET_KEY);
 export async function POST(req) {
     try {
         const body = await req.json();
-        const { firstName, lastName, email, mobileNo, birthDate, username, password, plan } = body;
+
+        // Zod Validation
+        const result = registerSchema.safeParse(body);
+        if (!result.success) {
+            return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 });
+        }
+
+        const { firstName, lastName, email, mobileNo, birthDate, username, password, plan } = result.data;
 
         // Basic validation (can be expanded)
         if (!email || !password || !username) {

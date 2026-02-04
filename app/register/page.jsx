@@ -85,6 +85,8 @@ const StandardProfileForm = ({
     isValid,
     onNext,
     onOpenTerms,
+    touchedFields,
+    dirtyFields,
 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -101,22 +103,38 @@ const StandardProfileForm = ({
                     { label: "EMAIL ADDRESS", name: "email", icon: "fa-envelope", placeholder: "e.g. martha.stewart@test.com" },
                     { label: "USERNAME", name: "username", icon: "fa-at", placeholder: "e.g. martha_s" },
                 ].map((field) => (
-                    <div key={field.name} className="space-y-2">
-                        <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
-                            {field.label} {field.name !== "email" && <span className="text-red-500 font-bold">*</span>}
-                        </label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                                <FontIcon icon={field.icon} />
-                            </span>
-                            <Input
-                                type={field.type || "text"}
-                                {...register(field.name)}
-                                className={`pl-12 border-gray-200 rounded-xl h-14 ${errors[field.name] ? "border-red-500" : ""}`}
+                    <div key={field.name}>
+                        {field.name === "birthDate" ? (
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
+                                    {field.label} <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                        <FontIcon icon={field.icon} />
+                                    </span>
+                                    <Input
+                                        type="date"
+                                        {...register(field.name)}
+                                        className={`pl-12 rounded-xl h-14 border-2 transition-all duration-200
+                                            ${errors[field.name]
+                                                ? "border-red-500"
+                                                : "border-gray-200"
+                                            }`}
+                                    />
+                                </div>
+                                {errors[field.name] && <p className="text-red-500 text-xs font-bold animate-in slide-in-from-left-1">{errors[field.name].message}</p>}
+                            </div>
+                        ) : (
+                            <InputField
+                                label={field.label}
+                                name={field.name}
+                                icon={field.icon}
+                                register={register}
+                                error={errors[field.name]}
                                 placeholder={field.placeholder}
                             />
-                        </div>
-                        {errors[field.name] && <p className="text-red-500 text-xs font-bold">{errors[field.name].message}</p>}
+                        )}
                     </div>
                 ))}
 
@@ -158,7 +176,7 @@ const StandardProfileForm = ({
             >
                 Continue
             </Button>
-        </form>
+        </form >
     );
 };
 
@@ -178,7 +196,6 @@ const WizardProfileForm = ({
     const [wizardStep, setWizardStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const agreed = watch('termsAccepted');
     const isValid = watch('isValid'); // Not really working like this, need to rely on trigger
 
     const nextStep = async () => {
@@ -195,9 +212,8 @@ const WizardProfileForm = ({
         const isStepValid = await trigger(fieldsToValidate);
         if (isStepValid) {
             if (wizardStep < 6) setWizardStep((prev) => prev + 1);
-            else if (idPreview && agreed) onNext();
-            else if (!idPreview) toast.error("Please upload your ID");
-            else if (!agreed) toast.error("Please accept the terms");
+            else if (idPreview) onNext();
+            else toast.error("Please upload your ID");
         }
     };
 
@@ -232,6 +248,7 @@ const WizardProfileForm = ({
                             icon="fa-user"
                             register={register}
                             error={errors.firstName}
+
                             placeholder="e.g. Martha"
                             autoFocus
                         />
@@ -241,6 +258,7 @@ const WizardProfileForm = ({
                             icon="fa-user"
                             register={register}
                             error={errors.lastName}
+
                             placeholder="e.g. Stewart"
                         />
                     </>
@@ -252,6 +270,7 @@ const WizardProfileForm = ({
                         icon="fa-envelope"
                         register={register}
                         error={errors.email}
+
                         placeholder="e.g. email@test.com"
                         autoFocus
                     />
@@ -277,6 +296,7 @@ const WizardProfileForm = ({
                         icon="fa-phone"
                         register={register}
                         error={errors.mobileNo}
+
                         placeholder="e.g. 975..."
                         autoFocus
                     />
@@ -288,6 +308,7 @@ const WizardProfileForm = ({
                             name="password"
                             register={register}
                             error={errors.password}
+
                             show={showPassword}
                             toggle={() => setShowPassword(!showPassword)}
                             size="lg"
@@ -298,6 +319,7 @@ const WizardProfileForm = ({
                             name="confirmPassword"
                             register={register}
                             error={errors.confirmPassword}
+
                             show={showConfirmPassword}
                             toggle={() => setShowConfirmPassword(!showConfirmPassword)}
                             size="lg"
@@ -312,6 +334,7 @@ const WizardProfileForm = ({
                             icon="fa-at"
                             register={register}
                             error={errors.username}
+
                             placeholder="e.g. martha_s"
                             autoFocus
                         />
@@ -605,12 +628,13 @@ const InputField = ({ label, name, icon, register, error, placeholder, autoFocus
             </span>
             <Input
                 {...register(name)}
-                className={`pl-12 border-gray-200 rounded-xl h-16 text-lg ${error ? "border-red-500" : ""}`}
+                className={`pl-12 rounded-xl h-16 text-lg transition-all duration-200 border-2
+                    ${error ? "border-red-500" : "border-gray-200"}`}
                 placeholder={placeholder}
                 autoFocus={autoFocus}
             />
         </div>
-        {error && <p className="text-red-500 text-xs font-bold">{error.message}</p>}
+        {error && <p className="text-red-500 text-xs font-bold animate-in slide-in-from-left-1">{error.message}</p>}
     </div>
 );
 
@@ -626,17 +650,21 @@ const PasswordField = ({ label, name, register, error, show, toggle, size = "md"
             <Input
                 type={show ? "text" : "password"}
                 {...register(name)}
-                className={`px-12 border-gray-200 rounded-xl ${size === "lg" ? "h-16 text-lg" : "h-14"} ${error ? "border-red-500" : ""}`}
+                className={`px-12 rounded-xl transition-all duration-200 border-2
+                    ${size === "lg" ? "h-16 text-lg" : "h-14"} 
+                    ${error ? "border-red-500" : "border-gray-200"}`}
                 autoFocus={autoFocus}
             />
-            <span
-                onClick={toggle}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
-            >
-                <FontIcon icon={show ? "fa-eye-slash" : "fa-eye"} />
-            </span>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                <span
+                    onClick={toggle}
+                    className="text-gray-400 cursor-pointer hover:text-[#023047] transition-colors"
+                >
+                    <FontIcon icon={show ? "fa-eye-slash" : "fa-eye"} />
+                </span>
+            </div>
         </div>
-        {error && <p className="text-red-500 text-xs font-bold">{error.message}</p>}
+        {error && <p className="text-red-500 text-xs font-bold animate-in slide-in-from-left-1">{error.message}</p>}
     </div>
 );
 
@@ -744,7 +772,7 @@ export default function RegisterPage() {
 
     const fileInputRef = useRef(null);
 
-    const { register, trigger, watch, setValue, getValues, formState: { errors, isValid } } = useForm({
+    const { register, trigger, watch, setValue, getValues, formState: { errors, isValid, touchedFields, dirtyFields } } = useForm({
         resolver: zodResolver(registerSchema),
         mode: "onChange",
         defaultValues: {
@@ -867,6 +895,8 @@ export default function RegisterPage() {
                                 <WizardProfileForm
                                     register={register}
                                     errors={errors}
+                                    touchedFields={touchedFields}
+                                    dirtyFields={dirtyFields}
                                     trigger={trigger}
                                     watch={watch}
                                     setValue={setValue}
@@ -881,6 +911,8 @@ export default function RegisterPage() {
                                 <StandardProfileForm
                                     register={register}
                                     errors={errors}
+                                    touchedFields={touchedFields}
+                                    dirtyFields={dirtyFields}
                                     watch={watch}
                                     setValue={setValue}
                                     isValid={isValid}

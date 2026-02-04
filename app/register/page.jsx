@@ -772,7 +772,7 @@ export default function RegisterPage() {
 
     const fileInputRef = useRef(null);
 
-    const { register, trigger, watch, setValue, getValues, formState: { errors, isValid, touchedFields, dirtyFields } } = useForm({
+    const { register, trigger, watch, setValue, getValues, setError, formState: { errors, isValid, touchedFields, dirtyFields } } = useForm({
         resolver: zodResolver(registerSchema),
         mode: "onChange",
         defaultValues: {
@@ -822,6 +822,37 @@ export default function RegisterPage() {
             ],
         },
     ];
+
+    const handleNext = async () => {
+        setIsLoading(true);
+        const { email, username } = getValues();
+
+        try {
+            const res = await fetch('/api/auth/check-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, username }),
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                setStep(2);
+            } else {
+                if (result.field === 'email') {
+                    setError('email', { type: 'manual', message: result.error });
+                } else if (result.field === 'username') {
+                    setError('username', { type: 'manual', message: result.error });
+                }
+                toast.error(result.error || "Please fix the errors before continuing.");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Network error. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -904,7 +935,7 @@ export default function RegisterPage() {
                                     handleFileChange={handleFileChange}
                                     idPreview={idPreview}
                                     setIdPreview={setIdPreview}
-                                    onNext={() => setStep(2)}
+                                    onNext={handleNext}
                                     onOpenTerms={() => setShowTermsModal(true)}
                                 />
                             ) : (
@@ -920,7 +951,7 @@ export default function RegisterPage() {
                                     handleFileChange={handleFileChange}
                                     idPreview={idPreview}
                                     setIdPreview={setIdPreview}
-                                    onNext={() => setStep(2)}
+                                    onNext={handleNext}
                                     onOpenTerms={() => setShowTermsModal(true)}
                                 />
                             ))}

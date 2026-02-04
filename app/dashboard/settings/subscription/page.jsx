@@ -138,88 +138,157 @@ const page = () => {
                 </div>
 
                 {!rescueMode ? (
-                    /* Standard Table Layout */
-                    <div className="w-full bg-white rounded-[2rem] shadow-card overflow-hidden border border-gray-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <Table className="w-full border-collapse">
-                            <TableHeader>
-                                <TableRow className="hover:bg-transparent border-none">
-                                    <TableHead className="w-1/4 p-10 pt-20 border-r border-gray-100">
-                                        <span className="text-[#023047]/60 font-bold uppercase tracking-widest text-[16px]">
-                                            Plan Features
-                                        </span>
-                                    </TableHead>
-                                    {tiers.map((tier) => (
-                                        <TableHead
-                                            key={tier.name}
-                                            className={`w-1/4 p-10 pt-16 text-center relative border-r last:border-r-0 border-gray-100 ${tier.name === currentPlan ? "bg-[#FFB703]/5 border-t-[5px] border-t-[#FFB703]" : ""}`}
-                                        >
-                                            <div className="flex flex-col items-center justify-center">
-                                                <h3 className={`text-3xl font-serif mb-1 ${tier.color}`}>{tier.name}</h3>
-                                                <div className="text-[#023047] text-5xl font-bold flex items-baseline justify-center">
-                                                    <span className="text-4xl">$</span>{tier.price}
-                                                    <span className="text-sm font-semibold text-gray-400 ml-1">/mo</span>
-                                                </div>
-                                                {tier.isRecommended && (
-                                                    <div className="mt-3 bg-[#FFB703] text-[#023047] text-[12px] font-black px-4 py-1 rounded-full uppercase tracking-tighter">
-                                                        Recommended
-                                                    </div>
-                                                )}
-                                            </div>
+                    <>
+                        {/* Desktop Table Layout */}
+                        <div className="hidden md:block w-full bg-white rounded-[2rem] shadow-card overflow-hidden border border-gray-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <Table className="w-full border-collapse">
+                                <TableHeader>
+                                    <TableRow className="hover:bg-transparent border-none">
+                                        <TableHead className="w-1/4 p-10 pt-20 border-r border-gray-100">
+                                            <span className="text-[#023047]/60 font-bold uppercase tracking-widest text-[16px]">
+                                                Plan Features
+                                            </span>
                                         </TableHead>
-                                    ))}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {features.map((feature, idx) => (
-                                    <TableRow key={idx} className="border-t border-gray-100 hover:bg-transparent">
-                                        <TableCell className="p-6 pl-10 font-bold text-[#023047] text-[15px] border-r border-gray-100">
-                                            {feature.label}
-                                        </TableCell>
-                                        {[
-                                            { val: feature.bronze, color: tiers[0].discountColor },
-                                            { val: feature.silver, color: tiers[1].discountColor },
-                                            { val: feature.gold, color: tiers[2].discountColor }
-                                        ].map((cell, i) => (
-                                            <TableCell key={i} className={`text-center p-6 border-r last:border-r-0 border-gray-100 ${tiers[i].name === currentPlan ? "bg-[#FFB703]/5" : ""}`}>
-                                                {typeof cell.val === "boolean" ? (
-                                                    cell.val ? (
-                                                        <FontIcon icon="fa-check" style="text-[#FB8500] text-xl" />
-                                                    ) : (
-                                                        <FontIcon icon="fa-xmark" style="text-[#8ECAE6] text-xl" />
-                                                    )
-                                                ) : (
-                                                    <span className={`font-bold text-lg ${cell.color}`}>{cell.val}</span>
-                                                )}
-                                            </TableCell>
+                                        {tiers.map((tier) => (
+                                            <TableHead
+                                                key={tier.name}
+                                                className={`w-1/4 p-10 pt-16 text-center relative border-r last:border-r-0 border-gray-100 ${tier.name === currentPlan ? "bg-[#FFB703]/5 border-t-[5px] border-t-[#FFB703]" : ""}`}
+                                            >
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <h3 className={`text-3xl font-serif mb-1 ${tier.color}`}>{tier.name}</h3>
+                                                    <div className="text-[#023047] text-5xl font-bold flex items-baseline justify-center">
+                                                        <span className="text-4xl">$</span>{tier.price}
+                                                        <span className="text-sm font-semibold text-gray-400 ml-1">/mo</span>
+                                                    </div>
+                                                    {tier.isRecommended && (
+                                                        <div className="mt-3 bg-[#FFB703] text-[#023047] text-[12px] font-black px-4 py-1 rounded-full uppercase tracking-tighter">
+                                                            Recommended
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </TableHead>
                                         ))}
                                     </TableRow>
-                                ))}
-                                <TableRow className="border-t border-gray-100 hover:bg-transparent">
-                                    <TableCell className="border-r border-gray-100" />
-                                    {tiers.map((tier) => {
-                                        const isCurrent = currentPlan === tier.name;
-                                        return (
-                                            <TableCell key={tier.name} className={`p-10 text-center border-r last:border-r-0 border-gray-100 ${isCurrent ? "bg-[#FFB703]/5" : ""}`}>
-                                                {isCurrent ? (
-                                                    <Button disabled className="w-full rounded-xl py-6 bg-[#FFB703]/20 text-[#FB8500] border-none font-black uppercase text-xs tracking-widest cursor-default">
-                                                        Current Plan
-                                                    </Button>
-                                                ) : (
-                                                    <Button
-                                                        onClick={() => openConfirmation(tier)}
-                                                        disabled={loading}
-                                                        className={`w-full rounded-xl py-6 ${tier.name === "Gold" ? "bg-[#8ECAE6] text-white" : "border border-gray-200 text-gray-100"} font-bold transition-all duration-300 cursor-pointer uppercase text-xs tracking-widest`}
-                                                    >
-                                                        {loading ? "..." : `Select ${tier.name}`}
-                                                    </Button>
-                                                )}
+                                </TableHeader>
+                                <TableBody>
+                                    {features.map((feature, idx) => (
+                                        <TableRow key={idx} className="border-t border-gray-100 hover:bg-transparent">
+                                            <TableCell className="p-6 pl-10 font-bold text-[#023047] text-[15px] border-r border-gray-100">
+                                                {feature.label}
                                             </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </div>
+                                            {[
+                                                { val: feature.bronze, color: tiers[0].discountColor },
+                                                { val: feature.silver, color: tiers[1].discountColor },
+                                                { val: feature.gold, color: tiers[2].discountColor }
+                                            ].map((cell, i) => (
+                                                <TableCell key={i} className={`text-center p-6 border-r last:border-r-0 border-gray-100 ${tiers[i].name === currentPlan ? "bg-[#FFB703]/5" : ""}`}>
+                                                    {typeof cell.val === "boolean" ? (
+                                                        cell.val ? (
+                                                            <FontIcon icon="fa-check" style="text-[#FB8500] text-xl" />
+                                                        ) : (
+                                                            <FontIcon icon="fa-xmark" style="text-[#8ECAE6] text-xl" />
+                                                        )
+                                                    ) : (
+                                                        <span className={`font-bold text-lg ${cell.color}`}>{cell.val}</span>
+                                                    )}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))}
+                                    <TableRow className="border-t border-gray-100 hover:bg-transparent">
+                                        <TableCell className="border-r border-gray-100" />
+                                        {tiers.map((tier) => {
+                                            const isCurrent = currentPlan === tier.name;
+                                            return (
+                                                <TableCell key={tier.name} className={`p-10 text-center border-r last:border-r-0 border-gray-100 ${isCurrent ? "bg-[#FFB703]/5" : ""}`}>
+                                                    {isCurrent ? (
+                                                        <Button disabled className="w-full rounded-xl py-6 bg-[#FFB703]/20 text-[#FB8500] border-none font-black uppercase text-xs tracking-widest cursor-default">
+                                                            Current Plan
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            onClick={() => openConfirmation(tier)}
+                                                            disabled={loading}
+                                                            className={`w-full rounded-xl py-6 ${tier.name === "Gold" ? "bg-[#8ECAE6] text-white" : "border border-gray-200 text-gray-100"} font-bold transition-all duration-300 cursor-pointer uppercase text-xs tracking-widest`}
+                                                        >
+                                                            {loading ? "..." : `Select ${tier.name}`}
+                                                        </Button>
+                                                    )}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </div>
+
+                        {/* Mobile Card Layout */}
+                        <div className="md:hidden w-full space-y-6">
+                            {tiers.map((tier, index) => {
+                                const isCurrent = currentPlan === tier.name;
+                                return (
+                                    <div key={tier.name} className={`relative bg-white rounded-[2rem] p-6 shadow-sm border-2 ${isCurrent ? 'border-[#FFB703]' : 'border-transparent'}`}>
+                                        {isCurrent && (
+                                            <div className="absolute top-0 right-0 bg-[#FFB703] text-[#023047] text-[10px] font-black px-4 py-2 rounded-bl-2xl rounded-tr-2xl uppercase tracking-widest">
+                                                Current Plan
+                                            </div>
+                                        )}
+
+                                        <div className="text-center mb-6">
+                                            <h3 className={`text-3xl font-serif font-black mb-2 ${tier.color}`}>{tier.name}</h3>
+                                            <div className="text-[#023047] text-4xl font-bold flex items-baseline justify-center">
+                                                <span className="text-2xl">$</span>{tier.price}
+                                                <span className="text-sm font-semibold text-gray-400 ml-1">/mo</span>
+                                            </div>
+                                            <p className="text-xs text-gray-400 mt-2 font-bold uppercase tracking-widest">{tier.needs}</p>
+                                        </div>
+
+                                        <div className="space-y-3 mb-8">
+                                            {features.map((feature, idx) => {
+                                                const val = feature[tier.name.toLowerCase()];
+                                                const isCheck = typeof val === 'boolean' && val === true;
+                                                const isText = typeof val !== 'boolean';
+
+                                                if (!val && val !== 0) return null; // Skip false items to be cleaner? Or show X? Let's show checkmarks and text values, maybe skip false for cleaner mobile view.
+
+                                                return (
+                                                    <div key={idx} className="flex items-center gap-3">
+                                                        <div className="w-6 flex justify-center">
+                                                            {isCheck ? (
+                                                                <FontIcon icon="fa-check" style="text-[#FB8500]" />
+                                                            ) : isText ? (
+                                                                <div className="w-1.5 h-1.5 bg-[#FFB703] rounded-full"></div>
+                                                            ) : (
+                                                                <FontIcon icon="fa-xmark" style="text-gray-200" />
+                                                            )}
+                                                        </div>
+                                                        <div className="text-sm text-[#023047] font-medium flex-1">
+                                                            {feature.label}
+                                                            {isText && <span className={`ml-2 font-bold ${tier.discountColor}`}>{val}</span>}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {isCurrent ? (
+                                            <Button disabled className="w-full rounded-xl py-6 bg-[#FFB703]/20 text-[#FB8500] border-none font-black uppercase text-xs tracking-widest">
+                                                Current Plan
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                onClick={() => openConfirmation(tier)}
+                                                disabled={loading}
+                                                className={`w-full rounded-xl py-6 ${tier.name === "Gold" ? "bg-[#8ECAE6] text-white" : "bg-[#023047] text-white"} font-bold shadow-lg uppercase text-xs tracking-widest`}
+                                            >
+                                                {loading ? "..." : `Select ${tier.name}`}
+                                            </Button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
                 ) : (
                     /* Rescue Mode - Simplified Layout */
                     <div className="w-full max-w-4xl space-y-6 animate-in slide-in-from-right-10 duration-500">
@@ -229,7 +298,7 @@ const page = () => {
                                 <div
                                     key={tier.name}
                                     onClick={() => !isCurrent && openConfirmation(tier)}
-                                    className={`group relative flex items-center p-10 rounded-[2rem] shadow-card cursor-pointer transition-all duration-300 border-2
+                                    className={`group relative flex items-center p-5 md:p-10 rounded-[2rem] shadow-card cursor-pointer transition-all duration-300 border-2
                                         ${isCurrent ? "bg-[#F3F4F6] border-[#FFB703]" : "bg-[#FFFCEB] border-transparent hover:border-[#FFB703]/30 hover:shadow-xl"}
                                     `}
                                 >
@@ -238,19 +307,19 @@ const page = () => {
                                             Current Plan
                                         </div>
                                     )}
-                                    <div className={`w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mr-10 transition-transform group-hover:scale-110
+                                    <div className={`w-12 h-12 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-2xl md:text-4xl mr-4 md:mr-10 transition-transform group-hover:scale-110 shrink-0
                                         ${tier.name === "Bronze" ? "bg-[#FFD7BA] text-[#FB8500]" : tier.name === "Silver" ? "bg-gray-200 text-gray-500" : "bg-[#FFFCEB] text-[#D4A373]"}
                                     `}>
                                         <FontIcon icon={tier.icon} />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className={`text-2xl font-black uppercase tracking-tight
+                                    <div className="flex-1 pr-2">
+                                        <h3 className={`text-sm md:text-2xl font-black uppercase tracking-tight leading-tight
                                             ${tier.name === "Bronze" ? "text-[#7F7F7F]" : tier.name === "Silver" ? "text-[#333333]" : "text-[#D4A373]"}
                                         `}>
                                             {tier.needs}
                                         </h3>
                                     </div>
-                                    <div className={`text-2xl font-black ${tier.color}`}>
+                                    <div className={`text-lg md:text-2xl font-black shrink-0 ${tier.color}`}>
                                         ${tier.price}/mo
                                     </div>
                                 </div>
@@ -262,7 +331,7 @@ const page = () => {
 
             {/* Confirmation Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300 px-4">
+                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300 px-4">
                     <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
                         <div className="bg-[#FFFCEB] pt-10 pb-6 flex flex-col items-center">
                             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg mb-4">

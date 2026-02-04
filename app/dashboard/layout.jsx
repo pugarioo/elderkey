@@ -5,7 +5,7 @@ export default function DashboardLayout({ children }) {
     return (
         <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-sans">
             <DashboardNavBar />
-            <main className="flex-grow">
+            <main className="grow w-full md:container md:mx-auto p-4 md:p-8">
                 {children}
             </main>
         </div>

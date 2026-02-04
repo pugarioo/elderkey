@@ -111,9 +111,9 @@ export default function PartnersView({ partners }) {
     }, [rescueMode, accessiblePartners, partners]);
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-20 pl-40 pr-40 relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 relative overflow-hidden text-[#023047]">
             <DottedBG />
-            <div className="relative z-10">
+            <div className="relative z-10 md:px-40">
 
                 {/* Header */}
                 <div className="mb-8">
@@ -211,11 +211,23 @@ export default function PartnersView({ partners }) {
                                             const userLevel = tierLevels[userPlan] || 1;
                                             const isLocked = partnerLevel > userLevel;
 
-                                            // Mock Promo Tags
+                                            // Dynamic Promo Configuration
+                                            const getDiscountRate = (plan) => {
+                                                switch (plan) {
+                                                    case 'Gold': return '20% OFF';
+                                                    case 'Silver': return '15% OFF';
+                                                    default: return '5% OFF';
+                                                }
+                                            };
+
                                             let promoTag = null;
-                                            if (partner.field === 'Health & Pharmacy' || partner.field === 'Dining') promoTag = '5% OFF';
-                                            if (partner.name.includes('Jollibee')) promoTag = 'Free Pie'; // Specific usage
-                                            if (partner.name.includes('Airlines')) promoTag = null;
+                                            // Only show promo tags for relevant categories
+                                            if (partner.field === 'Health & Pharmacy' || partner.field === 'Dining') {
+                                                promoTag = getDiscountRate(userPlan);
+                                            }
+
+                                            if (partner.name.includes('Jollibee')) promoTag = 'Free Pie'; // Keep specific overrides
+                                            if (partner.name.includes('Airlines')) promoTag = null; // No generalized discount for airlines usually
 
                                             return (
                                                 <PartnerCard

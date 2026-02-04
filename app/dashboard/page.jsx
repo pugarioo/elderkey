@@ -77,11 +77,11 @@ const Page = () => {
 
   return (
     <>
-      <main className="relative min-h-screen bg-[#F8F9FA] font-sans text-[#023047] overflow-x-hidden pl-40 pr-40 pt-16">
+      <div className="relative min-h-screen bg-[#F8F9FA] font-sans text-[#023047] overflow-x-hidden w-full">
         <DottedBg className="fixed inset-0 z-0" />
 
         {/* Main content section */}
-        <section className="relative z-10 py-10">
+        <section className="relative z-10 py-10 md:px-40">
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
             <div className="space-y-1">
               <h1 className="font-serif font-black text-4xl md:text-5xl tracking-tight text-[#023047]">
@@ -183,7 +183,7 @@ const Page = () => {
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#023047]/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
             <div className="relative w-full max-w-lg h-fit max-h-screen overflow-y-auto no-scrollbar flex flex-col items-center justify-center zoom-in duration-300">
 
-              <div className="text-center mb-6 flex-shrink-0">
+              <div className="text-center mb-6 shrink-0">
                 <h1 className="font-serif text-3xl md:text-4xl text-white font-bold mb-2">
                   My Digital ID
                 </h1>
@@ -230,7 +230,7 @@ const Page = () => {
             </div>
           </div>
         )}
-      </main>
+      </div>
       <React.Suspense fallback={null}>
         <IdCardParamHandler onShowId={setIsIdCardOpen} />
       </React.Suspense>

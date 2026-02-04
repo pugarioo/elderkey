@@ -903,20 +903,20 @@ export default function RegisterPage() {
     };
 
     return (
-        <main className="min-h-screen w-full bg-[#F8F9FA] relative flex flex-col items-center justify-center p-6 font-['Open_Sans'] overflow-hidden">
+        <main className="min-h-screen w-full bg-[#F8F9FA] relative flex flex-col items-center justify-center p-4 md:p-6 font-['Open_Sans'] overflow-hidden">
             <DottedBg />
 
             {/* Header */}
-            <div className="text-center mb-8 z-10">
-                <h1 className="font-['Merriweather'] text-4xl md:text-5xl font-black text-[#023047] mb-2">
+            <div className="text-center mb-6 md:mb-8 z-10 mt-10 md:mt-0">
+                <h1 className="font-['Merriweather'] text-3xl md:text-5xl font-black text-[#023047] mb-2">
                     Join the Community
                 </h1>
-                <p className="text-[#52796F] text-lg font-medium">
+                <p className="text-[#52796F] text-base md:text-lg font-medium">
                     Secure your digital membership in 3 simple steps.
                 </p>
             </div>
 
-            <Card className="w-full max-w-5xl bg-white shadow-card border-none rounded-[2.5rem] overflow-hidden z-10 min-h-[750px] flex flex-col transition-all duration-500">
+            <Card className="w-full max-w-5xl bg-white shadow-card border-none rounded-[2rem] md:rounded-[2.5rem] overflow-hidden z-10 min-h-[600px] md:min-h-[750px] flex flex-col transition-all duration-500 mb-10 md:mb-0">
                 <CardContent className="p-0 flex flex-col h-full">
                     <StepIndicator step={step} />
 

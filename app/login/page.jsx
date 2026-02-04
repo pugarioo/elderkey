@@ -50,11 +50,11 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="relative h-[calc(100vh-4rem)] w-full flex items-center justify-center p-4">
+        <div className="relative min-h-screen w-full flex items-center justify-center p-4">
             <DottedBG />
-            <div className="w-full pl-30 pr-30 flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-24 relative z-10">
+            <div className="w-full px-4 md:px-40 flex flex-col-reverse md:flex-row items-center justify-between gap-12 lg:gap-24 relative z-10 py-10">
                 {/* Left Column: Login Form */}
-                <div className="w-full md:w-1/2 max-w-lg bg-white/80 backdrop-blur-sm p-8 rounded-2xl  border-white/50">
+                <div className="w-full md:w-1/2 max-w-lg bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl  border-white/50 shadow-sm mx-auto md:mx-0">
                     <div className="mb-8 text-center md:text-left">
                         <h1 className="text-3xl font-serif font-bold text-deep-navy mb-2">Welcome Back</h1>
                         <p className="text-gray-500">Enter your details to access your account.</p>
@@ -114,14 +114,14 @@ export default function LoginPage() {
                 </div>
 
                 {/* Right Column: Digital ID Card */}
-                <div className="w-full md:w-1/2 flex justify-center md:justify-end">
-                    <div className="transform md:scale-90 lg:scale-100 transition-transform duration-500 hover:scale-[1.02]">
+                <div className="hidden md:flex w-full md:w-1/2 justify-center md:justify-end mb-8 md:mb-0">
+                    <div className="transform scale-90 md:scale-95 lg:scale-100 transition-transform duration-500 hover:scale-[1.02]">
                         <div className="relative">
                             {/* Warm Glow Effect matching landing page */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-orange-200/40 via-transparent to-transparent blur-3xl rounded-full -z-10"></div>
                             <DigitalIdCard />
                         </div>
-                        <div className="mt-8 text-center md:text-left max-w-md mx-auto">
+                        <div className="mt-8 text-center md:text-left max-w-md mx-auto hidden md:block">
                             <h2 className="text-2xl font-serif font-bold text-deep-navy mb-2">Your Key to Benefits</h2>
                             <p className="text-gray-500">Access discounts, priority lines, and health records with a single secure ID.</p>
                         </div>

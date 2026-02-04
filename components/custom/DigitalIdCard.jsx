@@ -15,7 +15,7 @@ const DigitalIdCard = forwardRef(({ className, user, view = 'front' }, ref) => {
 
     return (
         <div ref={ref} className={cn("w-full relative shadow-2xl", className)}>
-            <Card className="relative overflow-hidden aspect-[1.586/1] w-full rounded-[1.5rem] md:rounded-[2.5rem] border-none bg-gradient-to-br from-[#023047] via-[#004b52] to-[#001D3D] p-6 md:p-8 text-white">
+            <Card className="relative overflow-hidden aspect-[1.586/1] w-full rounded-[1.5rem] md:rounded-[2.5rem] border-none bg-linear-to-br from-[#023047] via-[#004b52] to-[#001D3D] p-6 md:p-8 text-white">
                 <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
                 {view === 'front' ? (

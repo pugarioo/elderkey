@@ -111,9 +111,9 @@ export default function PartnersView({ partners }) {
     }, [rescueMode, accessiblePartners, partners]);
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-20 pl-40 pr-40 relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 relative overflow-hidden text-[#023047]">
             <DottedBG />
-            <div className="relative z-10">
+            <div className="relative z-10 md:px-40">
 
                 {/* Header */}
                 <div className="mb-8">

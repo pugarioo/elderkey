@@ -10,6 +10,7 @@ import FontIcon from '@/components/icons/FontIcon';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from "@/context/UserContext";
+import { toast } from "sonner";
 
 const Page = () => {
   // 1. Modal & View State Logic
@@ -51,6 +52,19 @@ const Page = () => {
   };
 
   // 4. Function to handle PNG Download
+  const handleIdCardClick = () => {
+    if (userData.plan === 'Bronze') {
+      toast.error("Upgrade to Silver or Gold to unlock your Digital ID!", {
+        action: {
+          label: "Upgrade",
+          onClick: () => window.location.href = "/dashboard/settings/subscription"
+        }
+      });
+      return;
+    }
+    setIsIdCardOpen(true);
+  };
+
   const downloadPng = useCallback(async () => {
     if (idCardRef.current === null) return;
 
@@ -142,7 +156,7 @@ const Page = () => {
             </Link>
 
             <Card
-              onClick={() => setIsIdCardOpen(true)}
+              onClick={handleIdCardClick}
               className="flex flex-col justify-between p-8 bg-white rounded-[2rem] shadow-sm border-none min-h-[320px] transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer group"
             >
               <div>

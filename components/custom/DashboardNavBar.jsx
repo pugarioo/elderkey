@@ -6,6 +6,7 @@ import Logo from "@/components/icons/logo";
 import FontIcon from "@/components/icons/FontIcon";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
+import { toast } from "sonner";
 
 export default function DashboardNavBar() {
     const pathname = usePathname();
@@ -27,6 +28,22 @@ export default function DashboardNavBar() {
         if (path === '/dashboard' && pathname === '/dashboard') return true;
         if (path !== '/dashboard' && pathname?.startsWith(path)) return true;
         return false;
+    };
+
+    const handleLinkClick = (e, link) => {
+        if (link.name === "My ID Card" && user?.plan === "Bronze") {
+            e.preventDefault();
+            toast.error("Upgrade to Silver or Gold to unlock your Digital ID!", {
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/dashboard/settings/subscription")
+                }
+            });
+            if (isMenuOpen) setIsMenuOpen(false);
+            return;
+        }
+
+        if (isMenuOpen) setIsMenuOpen(false);
     };
 
     const navLinks = [
@@ -59,6 +76,7 @@ export default function DashboardNavBar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
+                                onClick={(e) => handleLinkClick(e, link)}
                                 className={`font-bold text-sm transition-colors ${isActive(link.href)
                                     ? "text-[#52796F]"
                                     : "text-gray-400 hover:text-[#023047]"
@@ -135,7 +153,7 @@ export default function DashboardNavBar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                onClick={() => setIsMenuOpen(false)}
+                                onClick={(e) => handleLinkClick(e, link)}
                                 className={`text-lg font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-between ${isActive(link.href)
                                     ? "bg-[#52796F]/10 text-[#52796F]"
                                     : "text-[#023047] hover:bg-gray-50"

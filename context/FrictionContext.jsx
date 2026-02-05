@@ -24,8 +24,8 @@ export const FrictionProvider = ({ children }) => {
     const movementHistoryRef = useRef([]); // For Scrubbing
 
     // Constants
-    const DECAY_FACTOR = 0.5;
-    const TICK_RATE = 500;
+    const DECAY_FACTOR = 0.1;
+    const TICK_RATE = 100;
 
     // Signal Config
     const SIGNALS = {
@@ -204,13 +204,14 @@ export const FrictionProvider = ({ children }) => {
             style.id = "friction-hint-style";
             style.innerHTML = `
                 @keyframes frictionPulse {
-                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.7); }
-                    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 183, 3, 0); }
+                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.9); }
+                    50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 183, 3, 0); }
                     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0); }
                 }
                 .friction-hint-pulse {
-                    animation: frictionPulse 0.8s ease-in-out;
-                    z-index: 10000; /* Try to sit on top */
+                    animation: frictionPulse 1s ease-in-out infinite;
+                    border-radius: 12px;
+                    z-index: 10000;
                 }
             `;
             document.head.appendChild(style);
@@ -240,14 +241,19 @@ export const FrictionProvider = ({ children }) => {
             if (distance <= PROXIMITY_RADIUS) {
                 el.classList.add("friction-hint-pulse");
                 pulsedCount++;
-                // Remove after animation
-                setTimeout(() => {
-                    el.classList.remove("friction-hint-pulse");
-                }, 1000);
+            } else {
+                el.classList.remove("friction-hint-pulse");
             }
         });
 
-        console.log(`[Friction] Proximity Hint Triggered on ${pulsedCount} elements`);
+        // console.log(`[Friction] Proximity Hint Active on ${pulsedCount} elements`);
+    };
+
+    const clearProximityHints = () => {
+        const selector =
+            'button, a, input, textarea, select, [role="button"], [role="link"]';
+        const elements = document.querySelectorAll(selector);
+        elements.forEach((el) => el.classList.remove("friction-hint-pulse"));
     };
 
     // Engine State for Cooldown
@@ -305,12 +311,14 @@ export const FrictionProvider = ({ children }) => {
                 // Trigger Hints if Stress is High
                 if (newScore > 50) {
                     const timeSinceLastHint = now - lastHintTimeRef.current;
-                    if (timeSinceLastHint > 1000) {
-                        // 1s Cooldown
-                        // Switched to proximity pulse as per requirement
+                    // Update frequency matches TICK_RATE for smooth response
+                    if (timeSinceLastHint >= TICK_RATE) {
                         triggerProximityPulse();
                         lastHintTimeRef.current = now;
                     }
+                } else if (prevScore > 50 && newScore <= 50) {
+                    // Just dropped below threshold - Cleanup
+                    clearProximityHints();
                 }
 
                 // Reset accumulator

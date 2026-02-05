@@ -118,8 +118,12 @@ export const FrictionProvider = ({ children }) => {
             }
         };
 
+
         const handleMouseMove = (e) => {
             const now = Date.now();
+
+            // Store latest cursor position
+            latestCursorRef.current = { x: e.clientX, y: e.clientY };
 
             // Push to history
             movementHistoryRef.current.push({
@@ -192,8 +196,63 @@ export const FrictionProvider = ({ children }) => {
         console.log(`[Friction] Hint Triggered on ${elements.length} elements`);
     };
 
+    // New Helper: Trigger Visual Assist (Proximity)
+    const triggerProximityPulse = () => {
+        // 1. Inject Style if missing
+        if (!document.getElementById("friction-hint-style")) {
+            const style = document.createElement("style");
+            style.id = "friction-hint-style";
+            style.innerHTML = `
+                @keyframes frictionPulse {
+                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.7); }
+                    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 183, 3, 0); }
+                    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0); }
+                }
+                .friction-hint-pulse {
+                    animation: frictionPulse 0.8s ease-in-out;
+                    z-index: 10000; /* Try to sit on top */
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // 2. Select Elements
+        const selector =
+            'button, a, input, textarea, select, [role="button"], [role="link"]';
+        const elements = document.querySelectorAll(selector);
+        const { x: cursorX, y: cursorY } = latestCursorRef.current;
+        const PROXIMITY_RADIUS = 300; // pixels
+
+        let pulsedCount = 0;
+
+        // 3. Apply Class to Nearby Elements
+        elements.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            // Calculate center of element
+            const elCenterX = rect.left + rect.width / 2;
+            const elCenterY = rect.top + rect.height / 2;
+
+            // Calculate distance
+            const distance = Math.sqrt(
+                Math.pow(cursorX - elCenterX, 2) + Math.pow(cursorY - elCenterY, 2)
+            );
+
+            if (distance <= PROXIMITY_RADIUS) {
+                el.classList.add("friction-hint-pulse");
+                pulsedCount++;
+                // Remove after animation
+                setTimeout(() => {
+                    el.classList.remove("friction-hint-pulse");
+                }, 1000);
+            }
+        });
+
+        console.log(`[Friction] Proximity Hint Triggered on ${pulsedCount} elements`);
+    };
+
     // Engine State for Cooldown
     const lastHintTimeRef = useRef(0);
+    const latestCursorRef = useRef({ x: 0, y: 0 });
 
     // Module B: The Interpreter
     useEffect(() => {
@@ -209,7 +268,7 @@ export const FrictionProvider = ({ children }) => {
                 for (let i = 1; i < moves.length; i++) {
                     totalDist += Math.sqrt(
                         Math.pow(moves[i].x - moves[i - 1].x, 2) +
-                            Math.pow(moves[i].y - moves[i - 1].y, 2),
+                        Math.pow(moves[i].y - moves[i - 1].y, 2),
                     );
                 }
 
@@ -244,11 +303,12 @@ export const FrictionProvider = ({ children }) => {
                 newScore = Math.max(0, Math.min(100, newScore));
 
                 // Trigger Hints if Stress is High
-                if (newScore > 80) {
+                if (newScore > 50) {
                     const timeSinceLastHint = now - lastHintTimeRef.current;
-                    if (timeSinceLastHint > 3000) {
-                        // 3s Cooldown
-                        triggerAssistiveHint();
+                    if (timeSinceLastHint > 1000) {
+                        // 1s Cooldown
+                        // Switched to proximity pulse as per requirement
+                        triggerProximityPulse();
                         lastHintTimeRef.current = now;
                     }
                 }

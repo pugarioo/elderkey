@@ -212,6 +212,8 @@ export const FrictionProvider = ({ children }) => {
                     animation: frictionPulse 1s ease-in-out infinite;
                     border-radius: 12px;
                     z-index: 10000;
+                    /* Ensure animation starts immediately but follows delay */
+                    animation-fill-mode: both;
                 }
             `;
             document.head.appendChild(style);
@@ -239,10 +241,21 @@ export const FrictionProvider = ({ children }) => {
             );
 
             if (distance <= PROXIMITY_RADIUS) {
-                el.classList.add("friction-hint-pulse");
+                // If it's a new entry (doesn't have the class yet), sync its animation
+                if (!el.classList.contains("friction-hint-pulse")) {
+                    const now = Date.now();
+                    const cycleDuration = 1000; // Matches 1s animation in CSS
+                    const offset = now % cycleDuration;
+                    // Set negative delay to jump into the correct phase of the global cycle
+                    el.style.animationDelay = `-${offset}ms`;
+                    el.classList.add("friction-hint-pulse");
+                }
                 pulsedCount++;
             } else {
-                el.classList.remove("friction-hint-pulse");
+                if (el.classList.contains("friction-hint-pulse")) {
+                    el.classList.remove("friction-hint-pulse");
+                    el.style.animationDelay = ""; // Clean up style
+                }
             }
         });
 

@@ -353,14 +353,14 @@ export const FrictionProvider = ({ children }) => {
                 newScore = Math.max(0, Math.min(100, newScore));
 
                 // Trigger Hints if Stress is High
-                if (newScore > 50) {
+                if (newScore > 80) {
                     const timeSinceLastHint = now - lastHintTimeRef.current;
                     // Update frequency matches TICK_RATE for smooth response
                     if (timeSinceLastHint >= TICK_RATE) {
                         triggerProximityPulse();
                         lastHintTimeRef.current = now;
                     }
-                } else if (prevScore > 50 && newScore <= 50) {
+                } else if (prevScore > 80 && newScore <= 80) {
                     // Just dropped below threshold - Cleanup
                     clearProximityHints();
                 }

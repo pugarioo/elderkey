@@ -87,13 +87,22 @@ const StandardProfileForm = ({
     onOpenTerms,
     touchedFields,
     dirtyFields,
+    handleSubmit,
 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const agreed = watch('termsAccepted');
 
+    const onSubmit = () => {
+        if (!idPreview) {
+            toast.error("Please upload your Senior Citizen ID to continue.");
+            return;
+        }
+        onNext();
+    };
+
     return (
-        <form className="space-y-6 animate-in fade-in duration-500" onSubmit={(e) => { e.preventDefault(); onNext(); }}>
+        <form className="space-y-6 animate-in fade-in duration-500" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {[
                     { label: "FIRST NAME", name: "firstName", icon: "fa-user", placeholder: "e.g. Martha" },
@@ -171,8 +180,7 @@ const StandardProfileForm = ({
 
             <Button
                 type="submit"
-                disabled={!isValid || !idPreview}
-                className={`w-full h-16 rounded-2xl font-bold text-xl transition-all cursor-pointer ${isValid && idPreview ? "bg-[#FFB703] hover:bg-[#FB8500] text-white shadow-lg shadow-[#FFB703]/30" : "bg-gray-200 text-gray-400"}`}
+                className={`w-full h-16 rounded-2xl font-bold text-xl transition-all cursor-pointer bg-[#FFB703] hover:bg-[#FB8500] text-white shadow-lg shadow-[#FFB703]/30`}
             >
                 Continue
             </Button>
@@ -209,7 +217,7 @@ const WizardProfileForm = ({
             case 6: fieldsToValidate = ['username', 'termsAccepted']; break;
         }
 
-        const isStepValid = await trigger(fieldsToValidate);
+        const isStepValid = await trigger(fieldsToValidate, { shouldFocus: true });
         if (isStepValid) {
             if (wizardStep < 6) setWizardStep((prev) => prev + 1);
             else if (idPreview) onNext();
@@ -248,7 +256,7 @@ const WizardProfileForm = ({
                             icon="fa-user"
                             register={register}
                             error={errors.firstName}
-
+                            trigger={trigger}
                             placeholder="e.g. Martha"
                             autoFocus
                         />
@@ -258,7 +266,7 @@ const WizardProfileForm = ({
                             icon="fa-user"
                             register={register}
                             error={errors.lastName}
-
+                            trigger={trigger}
                             placeholder="e.g. Stewart"
                         />
                     </>
@@ -270,7 +278,7 @@ const WizardProfileForm = ({
                         icon="fa-envelope"
                         register={register}
                         error={errors.email}
-
+                        trigger={trigger}
                         placeholder="e.g. email@test.com"
                         autoFocus
                     />
@@ -296,8 +304,8 @@ const WizardProfileForm = ({
                         icon="fa-phone"
                         register={register}
                         error={errors.mobileNo}
-
-                        placeholder="e.g. 975..."
+                        trigger={trigger}
+                        placeholder="e.g. 09xxxxxxxxx"
                         autoFocus
                     />
                 )}
@@ -308,7 +316,7 @@ const WizardProfileForm = ({
                             name="password"
                             register={register}
                             error={errors.password}
-
+                            trigger={trigger}
                             show={showPassword}
                             toggle={() => setShowPassword(!showPassword)}
                             size="lg"
@@ -319,7 +327,7 @@ const WizardProfileForm = ({
                             name="confirmPassword"
                             register={register}
                             error={errors.confirmPassword}
-
+                            trigger={trigger}
                             show={showConfirmPassword}
                             toggle={() => setShowConfirmPassword(!showConfirmPassword)}
                             size="lg"
@@ -334,7 +342,7 @@ const WizardProfileForm = ({
                             icon="fa-at"
                             register={register}
                             error={errors.username}
-
+                            trigger={trigger}
                             placeholder="e.g. martha_s"
                             autoFocus
                         />
@@ -617,7 +625,7 @@ const TermsModal = ({ onClose }) => (
 
 // --- HELPERS ---
 
-const InputField = ({ label, name, icon, register, error, placeholder, autoFocus }) => (
+const InputField = ({ label, name, icon, register, error, placeholder, autoFocus, trigger }) => (
     <div className="space-y-2">
         <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
             {label} <span className="text-red-500">*</span>
@@ -628,6 +636,7 @@ const InputField = ({ label, name, icon, register, error, placeholder, autoFocus
             </span>
             <Input
                 {...register(name)}
+                onBlur={() => trigger && trigger(name)}
                 className={`pl-12 rounded-xl h-16 text-lg transition-all duration-200 border-2
                     ${error ? "border-red-500" : "border-gray-200"}`}
                 placeholder={placeholder}
@@ -638,7 +647,7 @@ const InputField = ({ label, name, icon, register, error, placeholder, autoFocus
     </div>
 );
 
-const PasswordField = ({ label, name, register, error, show, toggle, size = "md", autoFocus }) => (
+const PasswordField = ({ label, name, register, error, show, toggle, size = "md", autoFocus, trigger }) => (
     <div className="space-y-2 relative">
         <label className="text-[11px] font-bold text-[#023047] uppercase tracking-wide">
             {label} <span className="text-red-500 font-bold">*</span>
@@ -650,6 +659,7 @@ const PasswordField = ({ label, name, register, error, show, toggle, size = "md"
             <Input
                 type={show ? "text" : "password"}
                 {...register(name)}
+                onBlur={() => trigger && trigger(name)}
                 className={`px-12 rounded-xl transition-all duration-200 border-2
                     ${size === "lg" ? "h-16 text-lg" : "h-14"} 
                     ${error ? "border-red-500" : "border-gray-200"}`}
@@ -772,7 +782,8 @@ export default function RegisterPage() {
 
     const fileInputRef = useRef(null);
 
-    const { register, trigger, watch, setValue, getValues, setError, formState: { errors, isValid, touchedFields, dirtyFields } } = useForm({
+
+    const { register, trigger, watch, setValue, getValues, setError, handleSubmit, formState: { errors, isValid, touchedFields, dirtyFields } } = useForm({
         resolver: zodResolver(registerSchema),
         mode: "onChange",
         defaultValues: {
@@ -953,6 +964,7 @@ export default function RegisterPage() {
                                     setIdPreview={setIdPreview}
                                     onNext={handleNext}
                                     onOpenTerms={() => setShowTermsModal(true)}
+                                    handleSubmit={handleSubmit}
                                 />
                             ))}
 

@@ -23,6 +23,10 @@ export const FrictionProvider = ({ children }) => {
     const clickHistoryRef = useRef([]); // For Rage Click
     const movementHistoryRef = useRef([]); // For Scrubbing
 
+    // Scroll Logic Refs
+    const lastScrollJob = useRef({ y: 0, time: 0, dir: null });
+    const rageScrollCount = useRef(0);
+
     // Constants
     const DECAY_FACTOR = 0.1;
     const TICK_RATE = 100;
@@ -144,8 +148,35 @@ export const FrictionProvider = ({ children }) => {
         };
 
         const handleScroll = () => {
-            // Basic friction (low weight)
-            recentStressRef.current += 1;
+            const now = Date.now();
+            const currentY = window.scrollY;
+            const diff = currentY - lastScrollJob.current.y;
+
+            // Ignore tiny shifts or initial load
+            if (Math.abs(diff) < 5) return;
+
+            const direction = diff > 0 ? "DOWN" : "UP";
+
+            // Check for rapid direction change (Rage Scroll)
+            if (
+                lastScrollJob.current.dir &&
+                direction !== lastScrollJob.current.dir &&
+                now - lastScrollJob.current.time < 400 // Fast change window
+            ) {
+                rageScrollCount.current++;
+
+                if (rageScrollCount.current >= 3) {
+                    recentStressRef.current += 15; // Weighted higher than scrubbing
+                    setLastSignal("RAGE SCROLL");
+                    console.log("[Friction] Rage Scroll Detected");
+                    rageScrollCount.current = 0; // Reset
+                }
+            } else if (now - lastScrollJob.current.time > 400) {
+                // Reset counter if scrolling is smooth/slow or unidirectional
+                rageScrollCount.current = 0;
+            }
+
+            lastScrollJob.current = { y: currentY, time: now, dir: direction };
         };
 
         window.addEventListener("mousedown", handleClick);
